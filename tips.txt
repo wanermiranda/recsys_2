@@ -1,0 +1,6 @@
+Genre
+Rating
+Director
+Awards
+Actors
+Year
