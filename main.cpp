@@ -5,12 +5,13 @@
 #include <map>
 #include <algorithm>
 #include <unordered_map>
-#include "StringUtils.h"
-#include "CSVReader.h"
-#include "ArrayUtils.h"
 #include "ReadInputs.h"
+#include "DebugUtils.h"
+#include "ItemContent.h"
 
 using namespace std;
+
+
 
 int main(int argc, char **argv) {
     if (argc < 4) {
@@ -23,12 +24,17 @@ int main(int argc, char **argv) {
     vector<size_t> target_users;
     vector<vector<string> > targets;
 
+    // Item Contents information
+    vector <ItemContent> item_contents;
+
+
     // The stats will hold the values for {count, avg, sum},
     vector<vector<float>> items_stats;
     vector<vector<float>> users_stats;
 
     vector<vector<string> > rows;
 
+    read_contents(argv[1], items, item_contents);
 
     read_ratings(argv[2], items, users, rows, items_stats, users_stats);
 
@@ -37,10 +43,10 @@ int main(int argc, char **argv) {
                  targets, target_users);
 
 
-    cout << "Rows: " << rows.size() << endl
+    DEBUG_ONLY(cout << "Rows: " << rows.size() << endl
         << " Items: " << items.size() << endl
         << " Users: " << users.size() << endl
         << " Targets Users:" << targets.size() << endl
-        << " Targets Users:" << target_users.size() << endl;
+        << " Targets Users:" << target_users.size() << endl);
 
 }

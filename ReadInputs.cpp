@@ -9,6 +9,23 @@
 #include <fstream>
 #include <string>
 
+
+void read_contents(char *filename, unordered_map<string, size_t> items, vector<ItemContent> &item_contents) {
+    DEBUG_ONLY(cout << "Reading contents..." << endl);
+    CSVReader row_reader('{');
+    ifstream contents_file(filename);
+    // skipping header
+    contents_file >> row_reader;
+    while (contents_file >> row_reader) {
+        string item = row_reader[0];
+        string content = row_reader[1];
+        remove_chars(content, "{}");
+        vector<string> content_values = split(content, "\",\"");
+        DEBUG_ONLY( cout << item << " , " << content_values[0] << endl);
+    }
+}
+
+
 void read_ratings(const char *filename, unordered_map<string, size_t> &items, unordered_map<string, size_t> &users,
                   vector<vector<string>> &rows, vector<vector<float>> &items_stats,
                   vector<vector<float>> &users_stats) {

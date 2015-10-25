@@ -14,7 +14,13 @@
 #include <string>
 
 class CSVReader {
+private:
+    std::vector<std::string> _current_line;
+    char _separator = ',';
 public:
+    CSVReader (char separator) {_separator=separator;}
+    CSVReader () {}
+
     std::string const& operator[](std::size_t index) const
     {
         if (index > size()) {
@@ -30,11 +36,8 @@ public:
         return _current_line.size();
     }
 
-    std::vector<std::string> last_line();
+    void read_line(std::ifstream&  str);
 
-    void read_line(std::ifstream& str);
-private:
-    std::vector<std::string> _current_line;
 };
 
 std::ifstream& operator>>(std::ifstream& str,CSVReader& data);
