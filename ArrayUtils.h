@@ -1,9 +1,40 @@
-#ifndef RECSYS_2_ARRAY_UTILS_H
-#define RECSYS_2_ARRAY_UTILS_H
+//
+// Created by Waner Miranda on 10/2/15.
+//
 
+#ifndef TP1_RECSYS_ARRAYUTILS_H
+#define TP1_RECSYS_ARRAYUTILS_H
+
+#include "Constants.h"
+#include <stdlib.h>
 #include <iostream>
-void debug_print_array(size_t M, size_t N,float *const *array);
+#include <vector>
 
-void debug_print_array(size_t N, float const *array) ;
+template <typename T> T **alloc_2D_array(size_t M, size_t N) {
+    T **array;
+    array = (T **)malloc(sizeof (*array) * M);
+    if (array)
+    {
 
-#endif RECSYS_2_ARRAY_UTILS_H
+        for (size_t i = 0; i < M; i++)
+        {
+            array[i] = (T *)malloc(N * (sizeof *array[i]));
+        }
+    }
+    return array;
+}
+template <typename T> T *alloc_1D_array(size_t N) {
+    T *array = (T*)malloc(sizeof (T) * N);
+    return array;
+}
+
+template <typename T>
+T find_by_value(std::vector<T> vector, T value){
+    auto it = std::find(vector.begin(), vector.end(), value);
+    if (it == vector.end())
+        exit(42);
+    return it - vector.begin();
+}
+
+
+#endif //TP1_RECSYS_ARRAYUTILS_H

@@ -1,26 +1,41 @@
-#include "CSVReader.h"
+//
+// Created by Waner Miranda on 10/2/15.
+//
+
+#ifndef TP1_RECSYS_CSVREADER_H
+#define TP1_RECSYS_CSVREADER_H
+
+#include "Constants.h"
+#include <iterator>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <string>
+
+class CSVReader {
+public:
+    std::string const& operator[](std::size_t index) const
+    {
+        if (index > size()) {
+            std::cout << "Index out of bounds." << std::endl;
+            return NULL;
+        }
+        else return _current_line[index];
 
 
-void CSVReader::read_line(std::ifstream& str) {
-    std::string line;
-    std::getline(str, line);
-
-    std::stringstream line_stream(line);
-    std::string cell;
-
-    _current_line.clear();
-    while (std::getline(line_stream, cell, ',')) {
-        _current_line.push_back(cell);
     }
-}
+    std::size_t size() const
+    {
+        return _current_line.size();
+    }
 
-std::vector<std::string> CSVReader::last_line()
-{
-    return _current_line;
-}
+    std::vector<std::string> last_line();
 
-std::ifstream& operator>>(std::ifstream& str,CSVReader& data)
-{
-    data.read_line(str);
-    return str;
-}
+    void read_line(std::ifstream& str);
+private:
+    std::vector<std::string> _current_line;
+};
+
+std::ifstream& operator>>(std::ifstream& str,CSVReader& data);
+#endif //TP1_RECSYS_CSVREADER_H

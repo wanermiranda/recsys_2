@@ -7,6 +7,11 @@
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CSVReader.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CSVReader.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Constants.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/DebugUtils.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/DebugUtils.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ReadInputs.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ReadInputs.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/StringUtils.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/StringUtils.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
