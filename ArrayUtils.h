@@ -9,6 +9,17 @@
 #include <stdlib.h>
 #include <iostream>
 #include <vector>
+#include <string>
+using namespace std;
+
+template<typename T>
+string vector2String(vector<T> vector1) {
+    string output;
+    output  = "[ ";
+    for (auto value: vector1) output += value + ' ';
+    output  += "] ";
+    return output;
+}
 
 template <typename T> T **alloc_2D_array(size_t M, size_t N) {
     T **array;

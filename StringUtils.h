@@ -1,5 +1,5 @@
 //
-// Created by gorigan on 10/2/15.
+// Created by Waner Miranda on 10/2/15.
 //
 
 #ifndef TP1_RECSYS_STRINGUTILS_H
@@ -8,8 +8,9 @@
 #include <string>
 #include <sstream>
 #include <vector>
-
-std::vector<std::string> split(const std::string &s, char delim);
-std::vector<std::string> split(const std::string &str, const std::string &delimiter);
-void remove_chars(std::string &s, std::string chars);
+using namespace std;
+vector<string> split(const string &s, char delim);
+vector<string> split(const string &str, const string &delimiter);
+void remove_chars(string &s, string chars);
+bool starts_with(const string &str, const string &prefix);
 #endif //TP1_RECSYS_STRINGUTILS_H

@@ -7,6 +7,7 @@
 #include "Constants.h"
 #include <iostream>
 #include <stddef.h>
+#include <vector>
 #ifdef DEBUG
 #define DEBUG_STDERR(x) (std::cerr << (x))
 #define DEBUG_ONLY(x) x
@@ -16,7 +17,7 @@
 #define DEBUG_ONLY(x)
 //... etc
 #endif
-
+using namespace std;
 void debug_print_array(size_t M, size_t N, float *const *array);
 
 void debug_print_array(size_t N, float const *array);

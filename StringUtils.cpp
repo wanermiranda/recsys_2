@@ -1,5 +1,5 @@
 //
-// Created by gorigan on 10/2/15.
+// Created by Waner Miranda on 10/2/15.
 //
 
 #include "StringUtils.h"
@@ -40,4 +40,8 @@ void remove_chars(string &s, string chars) {
         return chars.find(c) != string::npos;
     }), s.end());
 
+}
+
+bool starts_with(const string &str, const string &prefix) {
+    return (!str.compare(0, prefix.size(), prefix));
 }

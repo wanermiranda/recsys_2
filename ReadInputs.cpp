@@ -5,12 +5,13 @@
 #include "ReadInputs.h"
 #include "CSVReader.h"
 #include "StringUtils.h"
+#include "ItemContent.h"
 #include <sstream>
 #include <fstream>
 #include <string>
 
 
-void read_contents(char *filename, unordered_map<string, size_t> items, vector<ItemContent> &item_contents) {
+void read_contents(char *filename, unordered_map<string, size_t> &items, vector<ItemContent> &item_contents) {
     DEBUG_ONLY(cout << "Reading contents..." << endl);
     CSVReader row_reader('{');
     ifstream contents_file(filename);
@@ -18,10 +19,15 @@ void read_contents(char *filename, unordered_map<string, size_t> items, vector<I
     contents_file >> row_reader;
     while (contents_file >> row_reader) {
         string item = row_reader[0];
+        remove_chars(item, ",");
+        size_t item_pos = items.at(item);
         string content = row_reader[1];
         remove_chars(content, "{}");
-        vector<string> content_values = split(content, "\",\"");
-        DEBUG_ONLY( cout << item << " , " << content_values[0] << endl);
+        ItemContent itemContent(content, item_pos,item);
+        itemContent.print_debug();
+        item_contents.push_back(itemContent);
+
+//        DEBUG_ONLY( cout << item << " , " << content_values[0] << endl);
     }
 }
 

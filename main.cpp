@@ -34,19 +34,18 @@ int main(int argc, char **argv) {
 
     vector<vector<string> > rows;
 
-    read_contents(argv[1], items, item_contents);
-
     read_ratings(argv[2], items, users, rows, items_stats, users_stats);
 
     read_targets(argv[3], items, users,
                  items_stats, users_stats,
                  targets, target_users);
 
-
     DEBUG_ONLY(cout << "Rows: " << rows.size() << endl
-        << " Items: " << items.size() << endl
-        << " Users: " << users.size() << endl
-        << " Targets Users:" << targets.size() << endl
-        << " Targets Users:" << target_users.size() << endl);
+               << " Items: " << items.size() << endl
+               << " Users: " << users.size() << endl
+               << " Target pairs:" << targets.size() << endl
+               << " Targets Users:" << target_users.size() << endl);
+
+    read_contents(argv[1], items, item_contents);
 
 }
