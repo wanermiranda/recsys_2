@@ -1,6 +1,14 @@
 Genre
-Rating
+imdbRating
 Director
 Awards
 Actors
 Year
+Plot
+
+utility matrix - Item vs Item with user ratings for items 
+Item feature matrix - terms per items 
+Rochio
+To build a user feature matrix, terms per users
+you cater the item feature matrix and update it by using the user ratings for the target item
+them update the item column with the value of the term multipling it by the rating and dividing by number of items rated

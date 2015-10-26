@@ -24,10 +24,9 @@ void read_contents(char *filename, unordered_map<string, size_t> &items, vector<
         string content = row_reader[1];
         remove_chars(content, "{}");
         ItemContent itemContent(content, item_pos,item);
-        itemContent.print_debug();
+//        itemContent.print_debug();
         item_contents.push_back(itemContent);
 
-//        DEBUG_ONLY( cout << item << " , " << content_values[0] << endl);
     }
 }
 
@@ -86,33 +85,31 @@ void read_targets(char *filename, unordered_map<string, size_t> &items, unordere
     DEBUG_ONLY(cout << "Reading targets..." << endl);
     ifstream targets_file(filename);
     size_t target_count = 0;
+    size_t new_users = 0, new_items = 0;
+
     // Skip the header
     targets_file >> row_reader;
-    unordered_map<string, size_t> located_users;
-
     while (targets_file >> row_reader) {
 
         targets.push_back(split(row_reader[0], ':'));
 
-
-        if (users.find(targets[target_count][0]) == users.end()) {
-            users_stats.push_back(vector<float>({0, 0, -1}));
-            users.insert({targets[target_count][0], users.size()});
-        }
-
-        if (located_users.find(targets[target_count][0]) == located_users.end()) {
-            size_t user_pos = users.at(targets[target_count][0]);
-            target_users.push_back(user_pos);
-            located_users.insert({targets[target_count][0], user_pos});
-        }
-
         if (items.find(targets[target_count][1]) == items.end()) {
+            new_items ++;
             items_stats.push_back(vector<float>({0, 0, -1}));
             items.insert({targets[target_count][1], items.size()});
         }
 
+        if (users.find(targets[target_count][0]) == users.end()) {
+            new_users ++;
+            users_stats.push_back(vector<float>({0, 0, -1}));
+            users.insert({targets[target_count][0], users.size()});
+        }
+
+
         target_count++;
     }
+
+    DEBUG_ONLY(cout << "New Users: " << new_users << endl << "New Items: " << new_items << endl);
 
     targets_file.close();
 }

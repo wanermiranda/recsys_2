@@ -13,4 +13,8 @@ vector<string> split(const string &s, char delim);
 vector<string> split(const string &str, const string &delimiter);
 void remove_chars(string &s, string chars);
 bool starts_with(const string &str, const string &prefix);
+struct convert2lower {
+    void operator()(char& c) { c = tolower((unsigned char)c); }
+};
+
 #endif //TP1_RECSYS_STRINGUTILS_H

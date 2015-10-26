@@ -15,13 +15,16 @@ class ItemContent {
 public:
     // decided to have the public attributes
     // this will easy the access
-    string ItemId;
-    size_t ItemPos;
+    string ItemId; // String reference for the item id on the input file
+    size_t ItemPos; // Position in the vectors and utility matrix
+
+    // Bellow there is the selected metadata from the item
     string Genre;
     float imdbRating;
     vector<string> Director;
     vector<string> Awards;
     vector<string> Actors;
+    string Plot;
     size_t Year;
 
     ItemContent(string json_contents, size_t item_pos, string item_id);
@@ -29,6 +32,10 @@ public:
     void print_debug();
 
     string get_token_value(const string &str);
+
+    void analyze_terms();
+
+    pair<string, size_t> NTerms[N_TERMS];
 };
 
 

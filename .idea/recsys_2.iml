@@ -14,6 +14,8 @@
       <sourceFolder url="file://$MODULE_DIR$/ItemContent.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ReadInputs.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ReadInputs.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RecommenderUtils.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RecommenderUtils.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/StringUtils.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/StringUtils.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
@@ -24,12 +26,12 @@
       <library name="Header Search Paths">
         <CLASSES>
           <root url="file:///usr/include" />
-          <root url="file:///usr/lib/gcc/x86_64-redhat-linux/5.1.1/include" />
+          <root url="file:///usr/lib/gcc/x86_64-redhat-linux/4.9.2/include" />
           <root url="file:///usr/local/include" />
         </CLASSES>
         <SOURCES>
           <root url="file:///usr/include" />
-          <root url="file:///usr/lib/gcc/x86_64-redhat-linux/5.1.1/include" />
+          <root url="file:///usr/lib/gcc/x86_64-redhat-linux/4.9.2/include" />
           <root url="file:///usr/local/include" />
         </SOURCES>
       </library>

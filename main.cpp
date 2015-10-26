@@ -8,6 +8,7 @@
 #include "ReadInputs.h"
 #include "DebugUtils.h"
 #include "ItemContent.h"
+#include "RecommenderUtils.h"
 
 using namespace std;
 
@@ -21,6 +22,7 @@ int main(int argc, char **argv) {
 
     unordered_map<string, size_t> items;
     unordered_map<string, size_t> users;
+
     vector<size_t> target_users;
     vector<vector<string> > targets;
 
@@ -47,5 +49,14 @@ int main(int argc, char **argv) {
                << " Targets Users:" << target_users.size() << endl);
 
     read_contents(argv[1], items, item_contents);
+
+    DEBUG_ONLY(cout << "Computing average for items and users..." << endl);
+
+    compute_stats_avg(items_stats);
+    compute_stats_avg(users_stats);
+
+    DEBUG_ONLY(cout << "Building Utility Matrix..." << endl);
+
+    build_utility_matrix(rows, items, users);
 
 }
