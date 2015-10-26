@@ -35,7 +35,7 @@ public:
 
     void analyze_terms();
 
-    pair<string, size_t> NTerms[N_TERMS];
+    vector<pair<string, size_t>> NTerms;
 };
 
 

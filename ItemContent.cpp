@@ -76,7 +76,7 @@ void ItemContent::analyze_terms() {
     size_t top_terms_count[N_TERMS];
     // Initilizing
     for (int i = 0; i < N_TERMS; i++) {
-        top_terms[i] = "";
+        top_terms[i] = EMPTY_STR;
         top_terms_count[i] = 0;
     }
     // Loop through all words in the dictionary
@@ -84,7 +84,7 @@ void ItemContent::analyze_terms() {
     for (string raw_term: raw_terms) {
         string term(raw_term);
         for_each(term.begin(), term.end(), convert2lower());
-        
+        remove_chars(term, "\',.:;()[]");
         if ((UNWANTED_TERMS.find(term) == UNWANTED_TERMS.end())
             && (term.length() > 3)) {
             if (terms.find(term) == terms.end()) {
@@ -117,9 +117,10 @@ void ItemContent::analyze_terms() {
         }
     }
     // Transfering the most common terms to the attributes
-    for (int i = 0; i < N_TERMS; i++) {
-        NTerms[i] = make_pair(top_terms[i], top_terms_count[i]);
-        DEBUG_ONLY(cout << i << "th pair: <" << top_terms[i] << ',' << top_terms_count[i] << '>' << endl);
-    }
+    for (int i = 0; i < N_TERMS; i++)
+        if (top_terms[i] != EMPTY_STR){
+            NTerms.push_back( make_pair(top_terms[i], top_terms_count[i]));
+    //        DEBUG_ONLY(cout << i << "th pair: <" << top_terms[i] << ',' << top_terms_count[i] << '>' << endl);
+        }
 
 }

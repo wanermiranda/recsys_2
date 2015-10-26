@@ -9,7 +9,8 @@
 #define FLOAT_NONE_VALUE -99.00f
 #define N_TERMS 5
 const std::string NONE_STR = "N/A";
-const std::set<std::string> UNWANTED_TERMS = {"this", "that" };
+const std::string EMPTY_STR = "";
+const std::set<std::string> UNWANTED_TERMS = {"this", "that","they", "from", "what", "with" };
 #define DEBUG
 
 #endif //RECSYS_2_CONSTANTS_H

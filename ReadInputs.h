@@ -14,7 +14,9 @@
 
 using namespace std;
 
-void read_contents(char *filename, unordered_map<string, size_t> &items, vector<ItemContent> &item_contents);
+void read_contents(char *filename, unordered_map<string, size_t> &items, vector<ItemContent> &item_contents,
+                   set<string> &unique_terms);
+
 
 void read_targets(char *filename, unordered_map<string, size_t> &items, unordered_map<string, size_t> &users,
                   vector<vector<float>> &items_stats, vector<vector<float>> &users_stats,

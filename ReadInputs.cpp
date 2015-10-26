@@ -11,12 +11,15 @@
 #include <string>
 
 
-void read_contents(char *filename, unordered_map<string, size_t> &items, vector<ItemContent> &item_contents) {
+
+void read_contents(char *filename, unordered_map<string, size_t> &items, vector<ItemContent> &item_contents,
+                   set<string> &unique_terms) {
     DEBUG_ONLY(cout << "Reading contents..." << endl);
     CSVReader row_reader('{');
     ifstream contents_file(filename);
     // skipping header
     contents_file >> row_reader;
+    unique_terms.clear();
     while (contents_file >> row_reader) {
         string item = row_reader[0];
         remove_chars(item, ",");
@@ -24,9 +27,12 @@ void read_contents(char *filename, unordered_map<string, size_t> &items, vector<
         string content = row_reader[1];
         remove_chars(content, "{}");
         ItemContent itemContent(content, item_pos,item);
-//        itemContent.print_debug();
         item_contents.push_back(itemContent);
+//        itemContent.print_debug();
 
+        // Update unique terms
+        for (auto term_pair: itemContent.NTerms)
+            unique_terms.insert(term_pair.first);
     }
 }
 
@@ -82,6 +88,7 @@ void read_targets(char *filename, unordered_map<string, size_t> &items, unordere
                   vector<vector<string>> &targets,
                   vector<size_t> &target_users) {
     CSVReader row_reader;
+    unordered_map<string, size_t> located_users;
     DEBUG_ONLY(cout << "Reading targets..." << endl);
     ifstream targets_file(filename);
     size_t target_count = 0;
@@ -103,6 +110,12 @@ void read_targets(char *filename, unordered_map<string, size_t> &items, unordere
             new_users ++;
             users_stats.push_back(vector<float>({0, 0, -1}));
             users.insert({targets[target_count][0], users.size()});
+        }
+
+        if (located_users.find(targets[target_count][0]) == located_users.end()) {
+            size_t user_pos = users.at(targets[target_count][0]);
+            target_users.push_back(user_pos);
+            located_users.insert({targets[target_count][0], user_pos});
         }
 
 
