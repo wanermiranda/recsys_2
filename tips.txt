@@ -1,6 +1,6 @@
 Genre
 imdbRating
-Director
+Directors
 Awards
 Actors
 Year

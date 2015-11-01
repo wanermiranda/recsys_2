@@ -1,19 +1,21 @@
 //
-// Created by Waner Miranda on 10/24/15.
+// Created by gorigan on 11/1/15.
 //
-#include "DebugUtils.h"
-#include "ReadInputs.h"
+
+#include "ContentRecommender.h"
 #include "CSVReader.h"
+#include "DebugUtils.h"
 #include "StringUtils.h"
-#include "ItemContent.h"
-#include <sstream>
-#include <fstream>
-#include <string>
+#include "RecommenderUtils.h"
+#include "ArrayUtils.h"
 
+void ContentRecommender::load_args(char **argv, int argc) {
+    read_ratings(argv[2]);
+    read_targets(argv[3]);
+    read_contents(argv[1]);
+}
 
-
-void read_contents(char *filename, unordered_map<string, size_t> &items, vector<ItemContent> &item_contents,
-                   set<string> &unique_terms) {
+void ContentRecommender::read_contents(char *filename) {
     DEBUG_ONLY(cout << "Reading contents..." << endl);
     CSVReader row_reader('{');
     ifstream contents_file(filename);
@@ -28,18 +30,24 @@ void read_contents(char *filename, unordered_map<string, size_t> &items, vector<
         remove_chars(content, "{}");
         ItemContent itemContent(content, item_pos,item);
         item_contents.push_back(itemContent);
-//        itemContent.print_debug();
+        //itemContent.print_debug();
 
         // Update unique terms
         for (auto term_pair: itemContent.NTerms)
             unique_terms.insert(term_pair.first);
+        // Update unique_genres
+        unique_genres.insert(itemContent.Genre);
+        // Update unique directors
+        for (auto director: itemContent.Directors)
+            unique_directors.insert(director);
+        // Update unique actors
+        for (auto actor: itemContent.Actors)
+            unique_actors.insert(actor);
     }
+    DEBUG_ONLY(cout << "Unique terms: " << unique_terms.size() << endl);
+
 }
-
-
-void read_ratings(const char *filename, unordered_map<string, size_t> &items, unordered_map<string, size_t> &users,
-                  vector<vector<string>> &rows, vector<vector<float>> &items_stats,
-                  vector<vector<float>> &users_stats) {
+void ContentRecommender::read_ratings(char *filename) {
     ifstream ratings_file(filename);
     CSVReader row_reader;
     size_t row_count = 0;
@@ -48,9 +56,8 @@ void read_ratings(const char *filename, unordered_map<string, size_t> &items, un
     ratings_file >> row_reader;
     while (ratings_file >> row_reader) {
         vector<string> item_user = split(row_reader[0], ':');
-        rows.push_back(vector<string>({item_user[0], item_user[1], row_reader[1]}));
         row_count++;
-
+        ratings_rows.push_back(vector<string>({item_user[0], item_user[1], row_reader[1]}));
         float vote = stod(row_reader[1]);
 
         if (items.find(item_user[1]) != items.end()) {
@@ -80,13 +87,17 @@ void read_ratings(const char *filename, unordered_map<string, size_t> &items, un
         }
     }
     ratings_file.close();
+    DEBUG_ONLY(cout << "Rows: " << row_count << endl
+               << " Items: " << items.size() << endl
+               << " Users: " << users.size() << endl
+    );
+    DEBUG_ONLY(cout << "Computing average for items and users..." << endl);
+
+    compute_stats_avg(items_stats);
+    compute_stats_avg(users_stats);
 }
 
-
-void read_targets(char *filename, unordered_map<string, size_t> &items, unordered_map<string, size_t> &users,
-                  vector<vector<float>> &items_stats, vector<vector<float>> &users_stats,
-                  vector<vector<string>> &targets,
-                  vector<size_t> &target_users) {
+void ContentRecommender::read_targets(char *filename) {
     CSVReader row_reader;
     unordered_map<string, size_t> located_users;
     DEBUG_ONLY(cout << "Reading targets..." << endl);
@@ -123,6 +134,22 @@ void read_targets(char *filename, unordered_map<string, size_t> &items, unordere
     }
 
     DEBUG_ONLY(cout << "New Users: " << new_users << endl << "New Items: " << new_items << endl);
-
+    DEBUG_ONLY(cout << " Target pairs:" << targets.size() << endl
+                    << " Targets Users:" << target_users.size() << endl);
     targets_file.close();
+}
+
+void ContentRecommender::build_utility_matrix() {
+    DEBUG_ONLY(cout << "Building Utility Matrix..." << endl);
+    size_t row_count = users.size(), col_count = items.size();
+    float **utility_matrix = alloc_2D_array<float>(row_count, col_count);
+    init_utility_matrix(items, users, utility_matrix);
+
+    for (size_t index = 0; index < ratings_rows.size(); index++) {
+        size_t user_pos = users.at(ratings_rows[index][0]);
+        size_t item_pos = items.at(ratings_rows[index][1]);
+        float vote = stod(ratings_rows[index][2]);
+
+        utility_matrix[user_pos][item_pos] = vote;
+    }
 }

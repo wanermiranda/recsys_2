@@ -21,7 +21,7 @@ public:
     // Bellow there is the selected metadata from the item
     string Genre;
     float imdbRating;
-    vector<string> Director;
+    vector<string> Directors;
     vector<string> Awards;
     vector<string> Actors;
     string Plot;
@@ -36,6 +36,13 @@ public:
     void analyze_terms();
 
     vector<pair<string, size_t>> NTerms;
+
+    void build_feature_vectors();
+
+private:
+
+    vector<size_t> main_factors_vector;
+    vector<size_t> secundary_factors_vector;
 };
 
 

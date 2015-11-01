@@ -8,12 +8,12 @@
       <sourceFolder url="file://$MODULE_DIR$/CSVReader.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CSVReader.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Constants.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ContentRecommender.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ContentRecommender.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/DebugUtils.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/DebugUtils.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ItemContent.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ItemContent.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/ReadInputs.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/ReadInputs.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/RecommenderUtils.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/RecommenderUtils.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/StringUtils.cpp" isTestSource="false" />

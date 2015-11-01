@@ -23,8 +23,8 @@ ItemContent::ItemContent(string json_contents, size_t item_pos, string item_id) 
         if (starts_with(token, "Genre"))
             Genre = token_value;
 
-        else if (starts_with(token, "Director"))
-            Director = split(token_value, ',');
+        else if (starts_with(token, "Directors"))
+            Directors = split(token_value, ',');
 
         else if (starts_with(token, "Awards"))
             Awards = split(token_value, ',');
@@ -48,6 +48,7 @@ ItemContent::ItemContent(string json_contents, size_t item_pos, string item_id) 
     }
 
     analyze_terms();
+    build_feature_vectors();
 }
 
 string ItemContent::get_token_value(const string &str) {
@@ -64,7 +65,7 @@ void ItemContent::print_debug(){
                     << "Year: " << Year << endl
                     << "imdbRating: " << imdbRating << endl;
  );
-    DEBUG_ONLY(cout  << "Director: " << vector2String<string>(Director) << endl
+    DEBUG_ONLY(cout  << "Directors: " << vector2String<string>(Directors) << endl
                        << "Awards: " << vector2String<string>(Awards) << endl
                        << "Actors: " << vector2String<string>(Actors) << endl);
 }
@@ -77,7 +78,7 @@ void ItemContent::analyze_terms() {
     // Initilizing
     for (int i = 0; i < N_TERMS; i++) {
         top_terms[i] = EMPTY_STR;
-        top_terms_count[i] = 0;
+        top_terms_count[i] = SIZE_MAX;
     }
     // Loop through all words in the dictionary
     vector<string> raw_terms = split(Plot, ' ');
@@ -101,7 +102,7 @@ void ItemContent::analyze_terms() {
         string hold_term = term_pair.first;
 
         for (int i = 0; i < N_TERMS; i++) {
-            if (hold_count > top_terms_count[i]) {
+            if (hold_count < top_terms_count[i]) {
                 // save actual value from the position
                 size_t aux_count = top_terms_count[i];
                 string aux_term = top_terms[i];
@@ -120,7 +121,16 @@ void ItemContent::analyze_terms() {
     for (int i = 0; i < N_TERMS; i++)
         if (top_terms[i] != EMPTY_STR){
             NTerms.push_back( make_pair(top_terms[i], top_terms_count[i]));
-    //        DEBUG_ONLY(cout << i << "th pair: <" << top_terms[i] << ',' << top_terms_count[i] << '>' << endl);
+//            DEBUG_ONLY(cout << i << "th pair: <" << top_terms[i] << ',' << top_terms_count[i] << '>' << endl);
         }
 
+}
+
+void ItemContent::build_feature_vectors() {
+    int movie_decade = Year - 1930;
+
+    movie_decade = (movie_decade < 0)?0:movie_decade;
+
+
+    main_factors_vector.push_back(movie_decade);
 }
