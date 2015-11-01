@@ -28,6 +28,7 @@ private:
     set<string> unique_genres;
     set<string> unique_actors;
     set<string> unique_directors;
+    set<string> unique_awards;
 
     // list of items and users with their positions in the utility matrix
     unordered_map<string, size_t> items;
@@ -48,7 +49,8 @@ private:
     // Storing the ratings with rows to build the utility matrix after
     vector<vector<string>> ratings_rows;
 
-
+    // Utility matrix used to make faster the vote computation
+    vector<vector<float>> utility_matrix;
 
 };
 

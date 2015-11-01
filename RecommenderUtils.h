@@ -17,7 +17,7 @@ float **build_utility_matrix(const vector<vector<string>> &rows,
                              const unordered_map<string, size_t> &users);
 
 void init_utility_matrix(const unordered_map<string, size_t> &items, const unordered_map<string, size_t> &users,
-                         float **utility_matrix);
+                         vector<vector<float>>utility_matrix);
 
 
 void compute_stats_avg(vector<vector<float>> &stats);

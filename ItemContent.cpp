@@ -21,9 +21,9 @@ ItemContent::ItemContent(string json_contents, size_t item_pos, string item_id) 
         string token_value = get_token_value(token);
 
         if (starts_with(token, "Genre"))
-            Genre = token_value;
+            Genres =  split(token_value, ',');
 
-        else if (starts_with(token, "Directors"))
+        else if (starts_with(token, "Director"))
             Directors = split(token_value, ',');
 
         else if (starts_with(token, "Awards"))
@@ -61,7 +61,7 @@ string ItemContent::get_token_value(const string &str) {
 }
 
 void ItemContent::print_debug(){
- DEBUG_ONLY( cout << "Genre: " << Genre << endl
+ DEBUG_ONLY( cout << "Genres: " << vector2String<string>(Genres)<< endl
                     << "Year: " << Year << endl
                     << "imdbRating: " << imdbRating << endl;
  );
@@ -128,9 +128,10 @@ void ItemContent::analyze_terms() {
 
 void ItemContent::build_feature_vectors() {
     int movie_decade = Year - 1930;
-
+    main_factors_vector.resize(5);
     movie_decade = (movie_decade < 0)?0:movie_decade;
 
+    main_factors_vector[0] = movie_decade;
+    main_factors_vector[1] = imdbRating;
 
-    main_factors_vector.push_back(movie_decade);
 }

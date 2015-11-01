@@ -19,7 +19,7 @@ public:
     size_t ItemPos; // Position in the vectors and utility matrix
 
     // Bellow there is the selected metadata from the item
-    string Genre;
+    vector<string> Genres;
     float imdbRating;
     vector<string> Directors;
     vector<string> Awards;

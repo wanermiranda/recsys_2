@@ -36,15 +36,23 @@ void ContentRecommender::read_contents(char *filename) {
         for (auto term_pair: itemContent.NTerms)
             unique_terms.insert(term_pair.first);
         // Update unique_genres
-        unique_genres.insert(itemContent.Genre);
+        for (auto genre: itemContent.Genres)
+            unique_genres.insert(genre);
         // Update unique directors
         for (auto director: itemContent.Directors)
             unique_directors.insert(director);
         // Update unique actors
         for (auto actor: itemContent.Actors)
             unique_actors.insert(actor);
+        // Update unique awards
+        for (auto award: itemContent.Awards)
+            unique_awards.insert(award);
     }
-    DEBUG_ONLY(cout << "Unique terms: " << unique_terms.size() << endl);
+    DEBUG_ONLY(cout << "Unique terms: " << unique_terms.size() << endl
+                    << "Genres: " << unique_genres.size() << endl
+                    << "Actors: " << unique_actors.size() << endl
+                    << "Directors: " << unique_directors.size() << endl
+                    << "Awards: " << unique_awards.size() << endl);
 
 }
 void ContentRecommender::read_ratings(char *filename) {
@@ -142,7 +150,7 @@ void ContentRecommender::read_targets(char *filename) {
 void ContentRecommender::build_utility_matrix() {
     DEBUG_ONLY(cout << "Building Utility Matrix..." << endl);
     size_t row_count = users.size(), col_count = items.size();
-    float **utility_matrix = alloc_2D_array<float>(row_count, col_count);
+    utility_matrix.resize(row_count, vector<float>(col_count));
     init_utility_matrix(items, users, utility_matrix);
 
     for (size_t index = 0; index < ratings_rows.size(); index++) {
