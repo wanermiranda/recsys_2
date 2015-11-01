@@ -10,6 +10,7 @@
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
+#include <array>
 #include "ItemContent.h"
 
 using namespace std;
@@ -21,6 +22,7 @@ public:
     void read_contents(char *file_name);
     void read_targets(char *file_name);
     void build_utility_matrix();
+    void build_representations();
 
 private:
     // Unique terms encountered in the contents file
@@ -52,6 +54,10 @@ private:
     // Utility matrix used to make faster the vote computation
     vector<vector<float>> utility_matrix;
 
+    // Item Content Representations
+    vector<vector<float>> genres_representations;
+
+    vector<float> create_representation(set<string> terms, vector<string> hits);
 };
 
 

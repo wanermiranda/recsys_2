@@ -17,8 +17,11 @@ int main(int argc, char **argv) {
     }
 
     ContentRecommender recommender;
+
     recommender.load_args(argv, argc);
 
     recommender.build_utility_matrix();
+
+    recommender.build_representations();
 
 }

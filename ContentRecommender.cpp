@@ -161,3 +161,22 @@ void ContentRecommender::build_utility_matrix() {
         utility_matrix[user_pos][item_pos] = vote;
     }
 }
+
+vector<float> ContentRecommender::create_representation(set<string> terms, vector<string> hits) {
+    vector<float> representation(terms.size());
+    for (auto hit : hits) {
+        if (terms.find(hit) != terms.end())
+            representation[distance(terms.begin(), terms.find(hit))] = 1;
+    }
+    return representation;
+}
+
+void ContentRecommender::build_representations() {
+    int item_pos = 0;
+    genres_representations.resize(item_contents.size(), vector<float>(unique_genres.size()));
+    for (auto item_content : item_contents) {
+        genres_representations[item_pos] = create_representation(unique_genres,item_content.Genres);
+        item_pos ++;
+    }
+
+}
