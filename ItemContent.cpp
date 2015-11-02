@@ -125,3 +125,6 @@ void ItemContent::analyze_terms() {
 
 }
 
+ItemContent::ItemContent() {
+
+}

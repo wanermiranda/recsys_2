@@ -13,6 +13,8 @@ using namespace std;
 
 class ItemContent {
 public:
+    ItemContent();
+
     // decided to have the public attributes
     // this will easy the access
     string ItemId; // String reference for the item id on the input file

@@ -24,4 +24,5 @@ int main(int argc, char **argv) {
 
     recommender.build_representations();
 
+    recommender.compute_users_factors();
 }

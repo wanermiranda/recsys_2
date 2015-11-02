@@ -23,6 +23,7 @@ public:
     void read_targets(char *file_name);
     void build_utility_matrix();
     void build_representations();
+    void compute_users_factors();
 
 private:
     // Unique terms encountered in the contents file
@@ -31,6 +32,9 @@ private:
     set<string> unique_actors;
     set<string> unique_directors;
     set<string> unique_awards;
+
+    // Inverse Document Frequency
+    vector<float> genres_idf;
 
     // list of items and users with their positions in the utility matrix
     unordered_map<string, size_t> items;
@@ -61,13 +65,15 @@ private:
     vector<vector<float>> items_genres_representation;
     vector<vector<float>> users_genres_representation;
 
-    vector<float> create_representation(set<string> terms, vector<string> hits);
+    int total_items;
 
-    vector<pair<size_t, float>> compute_similarity(vector<vector<float>> &representations, size_t query_pos);
+    vector<float> create_representation(set<string> &terms, vector<string> &hits, vector<float> &idf);
 
-    void compute_similarities();
 
-    void compute_users_factors();
+    void compute_similarities(vector<vector<float>> &representation);
+
+
+    vector<vector<float>> compute_users_factors(vector<vector<float>> items_representations);
 };
 
 

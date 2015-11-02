@@ -6,8 +6,11 @@ Actors
 Year
 Plot
 
-utility matrix - Item vs Item with user ratings for items 
-Item feature matrix - terms per items 
+utility matrix - Item vs Item with user ratings for items  // Okey
+Item feature matrix - terms per items // Okey
+calculate idf // okey 
+calculate tf*idf // for items 
+build term per user matrix 
 Rochio
 To build a user feature matrix, terms per users
 you cater the item feature matrix and update it by using the user ratings for the target item
