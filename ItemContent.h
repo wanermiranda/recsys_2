@@ -37,7 +37,6 @@ public:
 
     vector<pair<string, size_t>> NTerms;
 
-    void build_feature_vectors();
 
 private:
 

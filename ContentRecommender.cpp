@@ -1,5 +1,5 @@
 //
-// Created by gorigan on 11/1/15.
+// Created by Waner Miranda on 11/1/15.
 //
 
 #include "ContentRecommender.h"
@@ -8,6 +8,7 @@
 #include "StringUtils.h"
 #include "RecommenderUtils.h"
 #include "ArrayUtils.h"
+#include "distances.h"
 
 void ContentRecommender::load_args(char **argv, int argc) {
     read_ratings(argv[2]);
@@ -116,33 +117,37 @@ void ContentRecommender::read_targets(char *filename) {
     // Skip the header
     targets_file >> row_reader;
     while (targets_file >> row_reader) {
-
+        size_t user_pos = 0, item_pos = 0;
         targets.push_back(split(row_reader[0], ':'));
-
-        if (items.find(targets[target_count][1]) == items.end()) {
+        string user_id = targets[target_count][0];
+        string item_id = targets[target_count][1];
+        if (items.find(item_id) == items.end()) {
             new_items ++;
             items_stats.push_back(vector<float>({0, 0, -1}));
-            items.insert({targets[target_count][1], items.size()});
-        }
+            item_pos = items.size();
+            items.insert({item_id, item_pos});
+        } else item_pos = items.at(item_id);
 
-        if (users.find(targets[target_count][0]) == users.end()) {
+        if (users.find(user_id) == users.end()) {
             new_users ++;
             users_stats.push_back(vector<float>({0, 0, -1}));
-            users.insert({targets[target_count][0], users.size()});
-        }
+            user_pos = users.size();
+            users.insert({user_id, user_pos});
+        } else user_pos = users.at(user_id);
 
-        if (located_users.find(targets[target_count][0]) == located_users.end()) {
-            size_t user_pos = users.at(targets[target_count][0]);
+        if (located_users.find(user_id) == located_users.end()) {
+            size_t user_pos = users.at(user_id);
             target_users.push_back(user_pos);
-            located_users.insert({targets[target_count][0], user_pos});
+            located_users.insert({user_id, user_pos});
         }
 
+        targets_positions.push_back({user_pos,item_pos});
 
         target_count++;
     }
 
     DEBUG_ONLY(cout << "New Users: " << new_users << endl << "New Items: " << new_items << endl);
-    DEBUG_ONLY(cout << " Target pairs:" << targets.size() << endl
+    DEBUG_ONLY(cout << " Target pairs:" << targets_positions.size() << endl
                     << " Targets Users:" << target_users.size() << endl);
     targets_file.close();
 }
@@ -173,10 +178,51 @@ vector<float> ContentRecommender::create_representation(set<string> terms, vecto
 
 void ContentRecommender::build_representations() {
     int item_pos = 0;
-    genres_representations.resize(item_contents.size(), vector<float>(unique_genres.size()));
-    for (auto item_content : item_contents) {
-        genres_representations[item_pos] = create_representation(unique_genres,item_content.Genres);
+    items_genres_representation.resize(item_contents.size(), vector<float>(unique_genres.size()));
+    for (ItemContent item_content : item_contents) {
+        items_genres_representation[item_pos] = create_representation(unique_genres,item_content.Genres);
         item_pos ++;
     }
+
+}
+
+vector<pair<size_t, float>> ContentRecommender::compute_similarity(vector<vector<float>> &representations, size_t query_pos) {
+    vector<pair<size_t, float>> results(NN);
+
+    return results;
+}
+
+void ContentRecommender::compute_similarities() {
+    // Precoputing similarity for Genres
+    vector<float> vectors_norms(items.size());
+    for (int idx = 0; idx < items.size(); idx ++) {
+        vectors_norms[idx] = vector_norm(items_genres_representation[idx]);
+    }
+    vector<vector<pair<size_t, float>>> similar_items_NN(items.size(), vector<pair<size_t, float>>(NN));
+
+    for (int idx_query = 0; idx_query < items.size(); idx_query ++) {
+        for (int nn_pos = 0; nn_pos < NN; nn_pos++) {
+            similar_items_NN[idx_query][nn_pos] = {0,0};
+        }
+        // Comparing items x items
+        for (int idx_target = 0; idx_target < items.size(); idx_target++) {
+            float cosine = 0;
+            cosine = dot_product(items_genres_representation[idx_query], items_genres_representation[idx_target]) /
+                    (vector_norm(items_genres_representation[idx_query]) * vector_norm(items_genres_representation[idx_target]));
+
+            float hold_cosine = cosine;
+            size_t hold_position = idx_target;
+
+            for (int nn_pos = 0; nn_pos < NN; nn_pos++)
+                if (similar_items_NN[idx_query][nn_pos].second < hold_cosine) {
+                    swap(hold_position, similar_items_NN[idx_query][nn_pos].first);
+                    swap(hold_cosine, similar_items_NN[idx_query][nn_pos].second);
+                }
+        }
+    }
+    // end genres
+}
+
+void ContentRecommender::compute_users_factors() {
 
 }

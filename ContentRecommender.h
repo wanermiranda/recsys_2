@@ -1,5 +1,5 @@
 //
-// Created by gorigan on 11/1/15.
+// Created by Waner Miranda on 11/1/15.
 //
 
 #ifndef TP1_RECSYS_CONTENTRECOMMENDER_H
@@ -38,8 +38,11 @@ private:
 
     // target users to filter the vector sim computation
     vector<size_t> target_users;
+
     // targets listed
     vector<vector<string> > targets;
+    vector<pair<size_t, size_t>> targets_positions;
+
 
     // Item Contents information
     vector <ItemContent> item_contents;
@@ -55,9 +58,16 @@ private:
     vector<vector<float>> utility_matrix;
 
     // Item Content Representations
-    vector<vector<float>> genres_representations;
+    vector<vector<float>> items_genres_representation;
+    vector<vector<float>> users_genres_representation;
 
     vector<float> create_representation(set<string> terms, vector<string> hits);
+
+    vector<pair<size_t, float>> compute_similarity(vector<vector<float>> &representations, size_t query_pos);
+
+    void compute_similarities();
+
+    void compute_users_factors();
 };
 
 

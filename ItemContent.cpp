@@ -48,7 +48,6 @@ ItemContent::ItemContent(string json_contents, size_t item_pos, string item_id) 
     }
 
     analyze_terms();
-    build_feature_vectors();
 }
 
 string ItemContent::get_token_value(const string &str) {
@@ -117,21 +116,12 @@ void ItemContent::analyze_terms() {
             }
         }
     }
-    // Transfering the most common terms to the attributes
+    // Transferring the most common terms to the attributes
     for (int i = 0; i < N_TERMS; i++)
         if (top_terms[i] != EMPTY_STR){
             NTerms.push_back( make_pair(top_terms[i], top_terms_count[i]));
-//            DEBUG_ONLY(cout << i << "th pair: <" << top_terms[i] << ',' << top_terms_count[i] << '>' << endl);
+            //DEBUG_ONLY(cout << i << "th pair: <" << top_terms[i] << ',' << top_terms_count[i] << '>' << endl);
         }
 
 }
 
-void ItemContent::build_feature_vectors() {
-    int movie_decade = Year - 1930;
-    main_factors_vector.resize(5);
-    movie_decade = (movie_decade < 0)?0:movie_decade;
-
-    main_factors_vector[0] = movie_decade;
-    main_factors_vector[1] = imdbRating;
-
-}

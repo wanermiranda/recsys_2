@@ -18,6 +18,8 @@
       <sourceFolder url="file://$MODULE_DIR$/RecommenderUtils.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/StringUtils.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/StringUtils.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/distances.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/distances.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />

@@ -6,6 +6,7 @@ FIND_PACKAGE ( Threads REQUIRED )
 
 set(SOURCE_FILES Constants.h main.cpp CSVReader.cpp CSVReader.h StringUtils.cpp StringUtils.h
         ArrayUtils.h ArrayUtils.cpp DebugUtils.cpp DebugUtils.h ContentRecommender.cpp ContentRecommender.h
+        distances.cpp distances.h
         ItemContent.cpp ItemContent.h RecommenderUtils.cpp RecommenderUtils.h)
 add_executable(recommender ${SOURCE_FILES})
 TARGET_LINK_LIBRARIES ( recommender ${CMAKE_THREAD_LIBS_INIT} )
