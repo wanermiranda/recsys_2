@@ -235,11 +235,14 @@ void ContentRecommender::compute_similarities(vector<vector<float>> &representat
 vector<vector<float>> ContentRecommender::compute_users_factors(vector<vector<float>> items_representations) {
     size_t term_count = items_representations[0].size();
     vector<vector<float>> users_representations(target_users.size(), vector<float>(term_count));
+    // Create a representation considering terms by user
+    size_t missing_terms_user = 0;
     for (int user_idx = 0; user_idx < target_users.size(); user_idx ++) {
         int user_pos = target_users[user_idx];
         // for each item move the weights from its terms for the user
+        float item_count = 0;
+        size_t zero_count = 0;
         for (int term_pos = 0; term_pos < term_count; term_pos ++ ) {
-            int item_count = 0;
             float term_sum_value = 0.0;
             for (int item_pos = 0; item_pos < items.size(); item_pos++) {
                 if ((utility_matrix[user_pos][item_pos] != 0)) {
@@ -247,9 +250,20 @@ vector<vector<float>> ContentRecommender::compute_users_factors(vector<vector<fl
                     term_sum_value += utility_matrix[user_pos][item_pos] * items_representations[item_pos][term_pos];
                 }
             }
-            users_representations[user_idx][term_pos] = term_sum_value / item_count;
+            if (item_count > 0 )
+                    users_representations[user_idx][term_pos] = term_sum_value / item_count;
+            else {
+                users_representations[user_idx][term_pos] = 0;
+                zero_count++;
+            }
+
         }
-        DEBUG_ONLY(cout << "Representation: " << vector2String<float>(users_representations[user_idx]) << endl);
+        if (zero_count == term_count)
+            missing_terms_user ++;
+        /*DEBUG_ONLY(cout << "Representation: " << vector2String<float>(users_representations[user_idx]) << endl
+                    << "Missing users:" << missing_terms_user << " "
+                   << missing_terms_user / static_cast<float>(target_users.size()) << "%"
+                   << endl); */
     }
 }
 
