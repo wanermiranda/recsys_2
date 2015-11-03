@@ -5,6 +5,7 @@
 #include <algorithm>
 
 #include "ContentRecommender.h"
+#include "DebugUtils.h"
 
 using namespace std;
 
@@ -24,5 +25,10 @@ int main(int argc, char **argv) {
 
     recommender.build_representations();
 
-    recommender.compute_users_factors();
+    recommender.compute_users_factors_matrix();
+
+    recommender.compute_similarities();
+    DEBUG_ONLY(cout << "Finished " << endl);
+
+    exit(0);
 }

@@ -23,6 +23,15 @@ string vector2String(vector<T> vector1) {
     return output.str();
 }
 
+template<typename T1, typename T2>
+string vectorPairs2String(vector<pair<T1, T2>> vector1) {
+    stringstream output;
+    output  << "[ ";
+    for (auto value: vector1) output << value.first  << ':' << value.second << ' ';
+    output  << "] ";
+    return output.str();
+}
+
 template <typename T> T **alloc_2D_array(size_t M, size_t N) {
     T **array;
     array = (T **)malloc(sizeof (*array) * M);

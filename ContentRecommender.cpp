@@ -9,7 +9,7 @@
 #include "RecommenderUtils.h"
 #include "ArrayUtils.h"
 #include "distances.h"
-
+#include <stddef.h>
 void ContentRecommender::load_args(char **argv, int argc) {
     read_ratings(argv[2]);
     read_targets(argv[3]);
@@ -138,6 +138,7 @@ void ContentRecommender::read_targets(char *filename) {
             items_stats.push_back(vector<float>({0, 0, -1}));
             item_pos = items.size();
             items.insert({item_id, item_pos});
+            non_listed_items.insert(item_pos);
         } else item_pos = items.at(item_id);
 
         if (users.find(user_id) == users.end()) {
@@ -145,20 +146,22 @@ void ContentRecommender::read_targets(char *filename) {
             users_stats.push_back(vector<float>({0, 0, -1}));
             user_pos = users.size();
             users.insert({user_id, user_pos});
+            non_listed_users.insert(user_pos);
         } else user_pos = users.at(user_id);
 
         if (located_users.find(user_id) == located_users.end()) {
             size_t user_pos = users.at(user_id);
-            target_users.push_back(user_pos);
-            located_users.insert({user_id, user_pos});
+            located_users.insert({item_id, item_pos});
         }
 
+        target_users.insert(user_pos);
         targets_positions.push_back({user_pos,item_pos});
 
         target_count++;
     }
 
-    DEBUG_ONLY(cout << "New Users: " << new_users << endl << "New Items: " << new_items << endl);
+    DEBUG_ONLY(cout << "New Users: " << new_users << " "  << non_listed_users.size() << endl
+               << "New Items: " << new_items << " " << non_listed_items.size() << endl);
     DEBUG_ONLY(cout << " Target pairs:" << targets_positions.size() << endl
                     << " Targets Users:" << target_users.size() << endl);
     targets_file.close();
@@ -199,74 +202,105 @@ void ContentRecommender::build_representations() {
         item_pos ++;
     }
 
+    utility_matrix.clear();
+
 }
 
-void ContentRecommender::compute_similarities(vector<vector<float>> &representation) {
-    // Precoputing similarity for Genres
-    vector<float> vectors_norms(items.size());
-    for (int idx = 0; idx < items.size(); idx ++) {
-        vectors_norms[idx] = vector_norm(representation[idx]);
-    }
-    vector<vector<pair<size_t, float>>> similar_items_NN(items.size(), vector<pair<size_t, float>>(NN));
+void ContentRecommender::compute_similarities(vector<vector<float>> &items_representations,
+                                              vector<vector<float>> &users_representations) {
+    // Calculating vectors norms to improve performance
+    vector<float> items_vectors_norms(items_representations.size());
+    vector<float> users_vectors_norms(users_representations.size());
 
-    for (int idx_query = 0; idx_query < items.size(); idx_query ++) {
+    for (int idx = 0; idx < items_representations.size(); idx++) {
+        items_vectors_norms[idx] = vector_norm(items_representations[idx]);
+    }
+
+    for (int idx = 0; idx < users_representations.size(); idx++) {
+        users_vectors_norms[idx] = vector_norm(users_representations[idx]);
+    }
+
+    vector<vector<pair<size_t, float>>> similar_items_NN(items_representations.size(), vector<pair<size_t, float>>(NN));
+
+    // Looping through the user representations to get its similar items
+    for (int idx_query = 0; idx_query < users_representations.size(); idx_query++) {
         for (int nn_pos = 0; nn_pos < NN; nn_pos++) {
-            similar_items_NN[idx_query][nn_pos] = {0,0};
+            similar_items_NN[idx_query][nn_pos] = {0, 0};
         }
-        // Comparing items x items
-        for (int idx_target = 0; idx_target < items.size(); idx_target++) {
-            float cosine = 0;
-            cosine = dot_product(representation[idx_query], representation[idx_target]) /
-                    (vector_norm(representation[idx_query]) * vector_norm(representation[idx_target]));
+        // Comparing user x items
+        for (int idx_target = 0; idx_target < items_representations.size(); idx_target++) {
+            // ignore if there is a Null vector in the pair query x target
+            if (users_vectors_norms[idx_query] * items_vectors_norms[idx_target] > 0) {
+                float cosine = 0;
+                cosine = dot_product(users_representations[idx_query], items_representations[idx_target]) /
+                         (users_vectors_norms[idx_query] * items_vectors_norms[idx_target]);
 
-            float hold_cosine = cosine;
-            size_t hold_position = idx_target;
+                float hold_cosine = cosine;
+                size_t hold_position = idx_target;
 
-            for (int nn_pos = 0; nn_pos < NN; nn_pos++)
-                if (similar_items_NN[idx_query][nn_pos].second < hold_cosine) {
-                    swap(hold_position, similar_items_NN[idx_query][nn_pos].first);
-                    swap(hold_cosine, similar_items_NN[idx_query][nn_pos].second);
-                }
+                for (int nn_pos = 0; nn_pos < NN; nn_pos++)
+                    if (similar_items_NN[idx_query][nn_pos].second < hold_cosine) {
+                        swap(hold_position, similar_items_NN[idx_query][nn_pos].first);
+                        swap(hold_cosine, similar_items_NN[idx_query][nn_pos].second);
+                    }
+            }
         }
+        DEBUG_ONLY(cout << idx_query << "/" << users_representations.size() << endl);
+        cout << vectorPairs2String<size_t, float>(similar_items_NN[idx_query]) << endl;
     }
-    // end genres
 }
+
 
 vector<vector<float>> ContentRecommender::compute_users_factors(vector<vector<float>> items_representations) {
     size_t term_count = items_representations[0].size();
     vector<vector<float>> users_representations(target_users.size(), vector<float>(term_count));
     // Create a representation considering terms by user
     size_t missing_terms_user = 0;
-    for (int user_idx = 0; user_idx < target_users.size(); user_idx ++) {
-        int user_pos = target_users[user_idx];
-        // for each item move the weights from its terms for the user
+    // Iterating users in the target list
+    size_t user_idx = 0;
+    for (auto user_pos : target_users) {
         float item_count = 0;
         size_t zero_count = 0;
-        for (int term_pos = 0; term_pos < term_count; term_pos ++ ) {
-            float term_sum_value = 0.0;
-            for (int item_pos = 0; item_pos < items.size(); item_pos++) {
-                if ((utility_matrix[user_pos][item_pos] != 0)) {
-                    item_count ++;
-                    term_sum_value += utility_matrix[user_pos][item_pos] * items_representations[item_pos][term_pos];
+        // For each term, consider the items rated by the user
+        // skipping users without rates
+        if (non_listed_users.find(user_pos) != non_listed_users.end()) {
+            for (int term_pos = 0; term_pos < term_count; term_pos++) {
+                float term_sum_value = 0.0;
+                // Computing items references to a term
+                for (int item_pos = 0; item_pos < items.size(); item_pos++) {
+                    if ((utility_matrix[user_pos][item_pos] != 0)) {
+                        item_count++;
+                        term_sum_value +=
+                                utility_matrix[user_pos][item_pos] * items_representations[item_pos][term_pos];
+                    }
                 }
-            }
-            if (item_count > 0 )
+                // If there are items rated by the user with this term push it to the representation
+                if (item_count > 0)
                     users_representations[user_idx][term_pos] = term_sum_value / item_count;
-            else {
-                users_representations[user_idx][term_pos] = 0;
-                zero_count++;
-            }
+                else {
+                    users_representations[user_idx][term_pos] = 0;
+                    zero_count++;
+                }
 
+            }
         }
         if (zero_count == term_count)
             missing_terms_user ++;
-        /*DEBUG_ONLY(cout << "Representation: " << vector2String<float>(users_representations[user_idx]) << endl
+        /*DEBUG_ONLY(cout << "Representation " << user_pos << " / " << user_idx << " :" << vector2String<float>(users_representations[user_idx]) << endl
                     << "Missing users:" << missing_terms_user << " "
-                   << missing_terms_user / static_cast<float>(target_users.size()) << "%"
-                   << endl); */
+                    << "Checking users:" << non_listed_users.size() << " "
+                    << missing_terms_user / static_cast<float>(target_users.size()) << "%"
+                    << endl);*/
+        user_idx ++;
     }
+    return users_representations;
 }
 
-void ContentRecommender::compute_users_factors() {
-    items_genres_representation = compute_users_factors(items_genres_representation);
+void ContentRecommender::compute_users_factors_matrix() {
+    users_genres_representation = compute_users_factors(items_genres_representation);
+}
+
+void ContentRecommender::compute_similarities() {
+    DEBUG_ONLY(cout << "Computing similarities" << endl);
+    compute_similarities(items_genres_representation, users_genres_representation);
 }

@@ -23,7 +23,8 @@ public:
     void read_targets(char *file_name);
     void build_utility_matrix();
     void build_representations();
-    void compute_users_factors();
+    void compute_users_factors_matrix();
+    void compute_similarities();
 
 private:
     // Unique terms encountered in the contents file
@@ -40,8 +41,12 @@ private:
     unordered_map<string, size_t> items;
     unordered_map<string, size_t> users;
 
+    set<size_t> non_listed_items;
+    set<size_t> non_listed_users;
+
+
     // target users to filter the vector sim computation
-    vector<size_t> target_users;
+    set<size_t> target_users;
 
     // targets listed
     vector<vector<string> > targets;
@@ -70,7 +75,8 @@ private:
     vector<float> create_representation(set<string> &terms, vector<string> &hits, vector<float> &idf);
 
 
-    void compute_similarities(vector<vector<float>> &representation);
+    void compute_similarities(vector<vector<float>> &items_representations,
+                              vector<vector<float>> &users_representations);
 
 
     vector<vector<float>> compute_users_factors(vector<vector<float>> items_representations);
