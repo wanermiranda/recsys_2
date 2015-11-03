@@ -8,10 +8,12 @@ DEBUG = -g
 APPNAME = recommender
 
 #Object
-OBJS = main.cpp CSVReader.cpp CSVReader.h StringUtils.cpp StringUtils.h ArrayUtils.h ArrayUtils.cpp
+OBJS = *.cpp *.h
+		
 release : ; $(G++) $(OBJS) -o $(APPNAME) $(LIBS) $(CFLAGS) $(OPTS)
 
 debug	: ; $(G++) $(OBJS) -o $(APPNAME) $(LIBS) $(CFLAGS) $(DEBUG)
+	 gdb --args ./recommender content.csv ratings.csv targets.csv
 
 all	:
 clean :

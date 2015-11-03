@@ -263,7 +263,7 @@ vector<vector<float>> ContentRecommender::compute_users_factors(vector<vector<fl
         size_t zero_count = 0;
         // For each term, consider the items rated by the user
         // skipping users without rates
-        if (non_listed_users.find(user_pos) != non_listed_users.end()) {
+        if (non_listed_users.find(user_pos) == non_listed_users.end()) {
             for (int term_pos = 0; term_pos < term_count; term_pos++) {
                 float term_sum_value = 0.0;
                 // Computing items references to a term
@@ -275,8 +275,9 @@ vector<vector<float>> ContentRecommender::compute_users_factors(vector<vector<fl
                     }
                 }
                 // If there are items rated by the user with this term push it to the representation
-                if (item_count > 0)
+                if (item_count > 0) {
                     users_representations[user_idx][term_pos] = term_sum_value / item_count;
+                }
                 else {
                     users_representations[user_idx][term_pos] = 0;
                     zero_count++;
@@ -286,11 +287,11 @@ vector<vector<float>> ContentRecommender::compute_users_factors(vector<vector<fl
         }
         if (zero_count == term_count)
             missing_terms_user ++;
-        /*DEBUG_ONLY(cout << "Representation " << user_pos << " / " << user_idx << " :" << vector2String<float>(users_representations[user_idx]) << endl
+        DEBUG_ONLY(cout << "Representation " << user_pos << " / " << user_idx << " :" << vector2String<float>(users_representations[user_idx]) << endl
                     << "Missing users:" << missing_terms_user << " "
                     << "Checking users:" << non_listed_users.size() << " "
                     << missing_terms_user / static_cast<float>(target_users.size()) << "%"
-                    << endl);*/
+                    << endl);
         user_idx ++;
     }
     return users_representations;
