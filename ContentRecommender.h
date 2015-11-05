@@ -25,6 +25,8 @@ public:
     void build_representations();
     void compute_users_factors_matrix();
     void compute_similarities();
+    void clear_utility_matrix();
+    void do_predictions();
 
 private:
     // Unique terms encountered in the contents file
@@ -51,10 +53,11 @@ private:
     // targets listed
     vector<vector<string> > targets;
     vector<pair<size_t, size_t>> targets_positions;
+    vector<vector<pair<size_t, float>>> similar_items_NN;
 
 
     // Item Contents information
-    vector <ItemContent> item_contents;
+    vector<ItemContent> item_contents;
 
     // The stats will hold the values for {count, avg, sum},
     vector<vector<float>> items_stats;

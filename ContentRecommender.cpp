@@ -24,6 +24,7 @@ void ContentRecommender::read_contents(char *filename) {
     contents_file >> row_reader;
     unique_terms.clear();
     total_items = 0;
+    item_contents.resize(items.size());
     while (contents_file >> row_reader) {
         total_items ++;
         string item = row_reader[0];
@@ -32,7 +33,7 @@ void ContentRecommender::read_contents(char *filename) {
         string content = row_reader[1];
         remove_chars(content, "{}");
         ItemContent itemContent(content, item_pos,item);
-        item_contents.push_back(itemContent);
+        item_contents[item_pos] = itemContent;
         //itemContent.print_debug();
 
         // Update unique terms
@@ -120,7 +121,7 @@ void ContentRecommender::read_ratings(char *filename) {
 
 void ContentRecommender::read_targets(char *filename) {
     CSVReader row_reader;
-    unordered_map<string, size_t> located_users;
+
     DEBUG_ONLY(cout << "Reading targets..." << endl);
     ifstream targets_file(filename);
     size_t target_count = 0;
@@ -149,10 +150,6 @@ void ContentRecommender::read_targets(char *filename) {
             non_listed_users.insert(user_pos);
         } else user_pos = users.at(user_id);
 
-        if (located_users.find(user_id) == located_users.end()) {
-            size_t user_pos = users.at(user_id);
-            located_users.insert({item_id, item_pos});
-        }
 
         target_users.insert(user_pos);
         targets_positions.push_back({user_pos,item_pos});
@@ -195,14 +192,12 @@ vector<float> ContentRecommender::create_representation(set<string> &terms, vect
 }
 
 void ContentRecommender::build_representations() {
-    int item_pos = 0;
+    int item_content_pos = 0;
     items_genres_representation.resize(item_contents.size(), vector<float>(unique_genres.size()));
-    for (ItemContent item_content : item_contents) {
-        items_genres_representation[item_pos] = create_representation(unique_genres, item_content.Genres, genres_idf);
-        item_pos ++;
+    for (auto item_content : item_contents) {
+        items_genres_representation[item_content_pos] = create_representation(unique_genres, item_content.Genres, genres_idf);
+        item_content_pos++;
     }
-
-    utility_matrix.clear();
 
 }
 
@@ -220,7 +215,7 @@ void ContentRecommender::compute_similarities(vector<vector<float>> &items_repre
         users_vectors_norms[idx] = vector_norm(users_representations[idx]);
     }
 
-    vector<vector<pair<size_t, float>>> similar_items_NN(items_representations.size(), vector<pair<size_t, float>>(NN));
+    similar_items_NN.resize(items_representations.size(), vector<pair<size_t, float>>(NN));
 
     // Looping through the user representations to get its similar items
     for (int idx_query = 0; idx_query < users_representations.size(); idx_query++) {
@@ -304,4 +299,33 @@ void ContentRecommender::compute_users_factors_matrix() {
 void ContentRecommender::compute_similarities() {
     DEBUG_ONLY(cout << "Computing similarities" << endl);
     compute_similarities(items_genres_representation, users_genres_representation);
+}
+
+void ContentRecommender::clear_utility_matrix() {
+    utility_matrix.clear();
+}
+
+void ContentRecommender::do_predictions() {
+    cout << "UserId:ItemId,Prediction" << endl;
+    size_t missing = 0;
+    for (size_t idx_target = 0; idx_target < targets_positions.size(); idx_target ++ ) {
+        size_t user_pos = targets_positions[idx_target].first;
+        size_t item_pos = targets_positions[idx_target].second;
+        float vote_prediction = 0.0f;
+        size_t sim_vector_idx = distance(target_users.find(user_pos), target_users.end());
+            float vote_sums = 0.0f;
+            for (size_t n_idx =0; n_idx < NN; n_idx ++) {
+                float n_sim = similar_items_NN[sim_vector_idx][n_idx].second;
+                size_t n_pos = similar_items_NN[sim_vector_idx][n_idx].first;
+                vote_sums += utility_matrix[user_pos][n_pos] * n_sim;
+            }
+            vote_prediction = vote_sums / static_cast<float>(NN);
+
+        if (vote_prediction == 0) {
+            vote_prediction = item_contents[item_pos].imdbRating;
+            missing ++;
+        }
+        cout <<  targets[idx_target][0] <<  ":" << targets[idx_target][1] << "," << vote_prediction << endl;
+    }
+    DEBUG_ONLY(cout << "Missing: " << missing  << " Targets: " << targets.size() << endl;)
 }

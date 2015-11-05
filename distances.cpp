@@ -39,5 +39,8 @@ float vector_norm(vector<float> vector1) {
 }
 
 float dot_product(vector<float> &vector1, vector<float> &vector2) {
-    return 0;
+    float dot_prod = 0.0f;
+    for (int idx = 0; idx < vector1.size(); idx++)
+        dot_prod += vector1[idx] * vector2[idx];
+    return dot_prod;
 }

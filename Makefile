@@ -14,7 +14,8 @@ release : ; $(G++) $(OBJS) -o $(APPNAME) $(LIBS) $(CFLAGS) $(OPTS)
 
 debug	: ; $(G++) $(OBJS) -o $(APPNAME) $(LIBS) $(CFLAGS) $(DEBUG)
 	 gdb --args ./recommender content.csv ratings.csv targets.csv
-
+run	: ; make release 
+	./recommender content.csv ratings.csv targets.csv
 all	:
 clean :
 	rm -f $(APPNAME) *.o
