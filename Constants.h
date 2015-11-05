@@ -12,6 +12,6 @@
 const std::string NONE_STR = "N/A";
 const std::string EMPTY_STR = "";
 const std::set<std::string> UNWANTED_TERMS = {"this", "that","they", "from", "what", "with" };
-#define DEBUG
+//#define DEBUG
 
 #endif //RECSYS_2_CONSTANTS_H

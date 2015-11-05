@@ -241,7 +241,7 @@ void ContentRecommender::compute_similarities(vector<vector<float>> &items_repre
             }
         }
         DEBUG_ONLY(cout << idx_query << "/" << users_representations.size() << endl);
-        cout << vectorPairs2String<size_t, float>(similar_items_NN[idx_query]) << endl;
+//        DEBUG_ONLY(cout << vectorPairs2String<size_t, float>(similar_items_NN[idx_query]) << endl;)
     }
 }
 
