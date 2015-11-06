@@ -48,6 +48,14 @@ ItemContent::ItemContent(string json_contents, size_t item_pos, string item_id) 
     }
 
     analyze_terms();
+
+    append_vectors<string>(MainTerms, Genres);
+    append_vectors<string>(MainTerms, Directors);
+    append_vectors<string>(MainTerms, Awards);
+    append_vectors<string>(MainTerms, Actors);
+//    append_vectors<string>(MainTerms, PlotTerms);
+
+
 }
 
 string ItemContent::get_token_value(const string &str) {
@@ -119,7 +127,8 @@ void ItemContent::analyze_terms() {
     // Transferring the most common terms to the attributes
     for (int i = 0; i < N_TERMS; i++)
         if (top_terms[i] != EMPTY_STR){
-            NTerms.push_back( make_pair(top_terms[i], top_terms_count[i]));
+            plot_pair_terms.push_back(make_pair(top_terms[i], top_terms_count[i]));
+            PlotTerms.push_back(top_terms[i]);
             //DEBUG_ONLY(cout << i << "th pair: <" << top_terms[i] << ',' << top_terms_count[i] << '>' << endl);
         }
 

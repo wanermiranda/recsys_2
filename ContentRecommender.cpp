@@ -30,45 +30,43 @@ void ContentRecommender::read_contents(char *filename) {
         string item = row_reader[0];
         remove_chars(item, ",");
         size_t item_pos = items.at(item);
-        string content = row_reader[1];
-        remove_chars(content, "{}");
-        ItemContent itemContent(content, item_pos,item);
-        item_contents[item_pos] = itemContent;
-        //itemContent.print_debug();
+        if (target_items.find(item_pos) != target_items.end()) {
+            string content = row_reader[1];
+            remove_chars(content, "{}");
+            ItemContent itemContent(content, item_pos, item);
+            item_contents[item_pos] = itemContent;
+            //itemContent.print_debug();
 
-        // Update unique terms
-        for (auto term_pair: itemContent.NTerms)
-            unique_terms.insert(term_pair.first);
-        // Update unique_genres
-        for (auto genre: itemContent.Genres) {
-            unique_genres.insert(genre);
-            size_t genre_pos = distance(unique_genres.begin(), unique_genres.find(genre));
-            if (unique_genres.size() > genres_idf.size())
-                genres_idf.push_back(1);
-            else genres_idf[genre_pos] ++;
+            // Update unique terms
+            for (auto term: itemContent.MainTerms) {
+                register_term_frequency(term, unique_main_terms, main_terms_idf);
+            }
+
+            DEBUG_ONLY(cout << "Items read: " << total_items << endl);
         }
-        // Update unique directors
-        for (auto director: itemContent.Directors)
-            unique_directors.insert(director);
-        // Update unique actors
-        for (auto actor: itemContent.Actors)
-            unique_actors.insert(actor);
-        // Update unique awards
-        for (auto award: itemContent.Awards)
-            unique_awards.insert(award);
     }
 
-    for (int idx =0; idx < genres_idf.size(); idx ++)
-        genres_idf[idx] = log(total_items / genres_idf[idx]);
+    for (int idx =0; idx < main_terms_idf.size(); idx ++)
+        main_terms_idf[idx] = log(total_items / main_terms_idf[idx]);
 
     DEBUG_ONLY(cout << "Unique terms: " << unique_terms.size() << endl
                     << "Genres: " << unique_genres.size() << endl
-                    << "Genres IDF Count: " << genres_idf.size() << endl
+                    << "Genres IDF Count: " << main_terms_idf.size() << endl
                     << "Actors: " << unique_actors.size() << endl
                     << "Directors: " << unique_directors.size() << endl
                     << "Awards: " << unique_awards.size() << endl);
 
 }
+
+void ContentRecommender::register_term_frequency(const string &value, set<string> &unique_values,
+                                                 vector<float> &values_idf) const {
+    unique_values.insert(value);
+    size_t value_pos = distance(unique_values.begin(), unique_values.find(value));
+    if (unique_values.size() > values_idf.size())
+                values_idf.push_back(1);
+            else values_idf[value_pos] ++;
+}
+
 void ContentRecommender::read_ratings(char *filename) {
     ifstream ratings_file(filename);
     CSVReader row_reader;
@@ -152,6 +150,7 @@ void ContentRecommender::read_targets(char *filename) {
 
 
         target_users.insert(user_pos);
+        target_items.insert(item_pos);
         targets_positions.push_back({user_pos,item_pos});
 
         target_count++;
@@ -193,9 +192,9 @@ vector<float> ContentRecommender::create_representation(set<string> &terms, vect
 
 void ContentRecommender::build_representations() {
     int item_content_pos = 0;
-    items_genres_representation.resize(item_contents.size(), vector<float>(unique_genres.size()));
+    items_representation.resize(item_contents.size(), vector<float>(unique_main_terms.size()));
     for (auto item_content : item_contents) {
-        items_genres_representation[item_content_pos] = create_representation(unique_genres, item_content.Genres, genres_idf);
+        items_representation[item_content_pos] = create_representation(unique_main_terms, item_content.MainTerms, main_terms_idf);
         item_content_pos++;
     }
 
@@ -245,6 +244,45 @@ void ContentRecommender::compute_similarities(vector<vector<float>> &items_repre
     }
 }
 
+void ContentRecommender::do_content_predictions(vector<vector<float>> &items_representations,
+                                                vector<vector<float>> &users_representations) {
+    size_t missing = 0;
+    // Calculating vectors norms to improve performance
+    vector<float> items_vectors_norms(items_representations.size());
+    vector<float> users_vectors_norms(users_representations.size());
+
+    targets_predictions.resize(targets_positions.size());
+
+    for (int idx = 0; idx < items_representations.size(); idx++) {
+        items_vectors_norms[idx] = vector_norm(items_representations[idx]);
+    }
+
+    for (int idx = 0; idx < users_representations.size(); idx++) {
+        users_vectors_norms[idx] = vector_norm(users_representations[idx]);
+    }
+
+    // Comparing user x items
+    for (int idx_target = 0; idx_target < targets_positions.size(); idx_target++) {
+        size_t user_pos = targets_positions[idx_target].first;
+        // Since the representation was created only for the target users we need to locate it into the set
+        size_t target_user_pos = distance(target_users.find(user_pos), target_users.end());
+        size_t item_pos = targets_positions[idx_target].second;
+        // ignore if there is a Null vector in the pair query x target
+        if (users_vectors_norms[target_user_pos] * items_vectors_norms[item_pos] > 0) {
+            float cosine = dot_product(users_representations[target_user_pos], items_representations[item_pos]) /
+                           (users_vectors_norms[target_user_pos] * items_vectors_norms[item_pos]);
+            targets_predictions[idx_target] = cosine * VOTE_MAX_VALUE;
+        }
+        else  {
+            targets_predictions[idx_target] = item_contents[item_pos].imdbRating;
+            missing ++;
+        }
+
+        DEBUG_ONLY(cout << idx_target << "/" << targets_positions.size() << endl);
+    }
+
+    DEBUG_ONLY(cout << "Missing : " << missing << endl;)
+}
 
 vector<vector<float>> ContentRecommender::compute_users_factors(vector<vector<float>> items_representations) {
     size_t term_count = items_representations[0].size();
@@ -293,16 +331,23 @@ vector<vector<float>> ContentRecommender::compute_users_factors(vector<vector<fl
 }
 
 void ContentRecommender::compute_users_factors_matrix() {
-    users_genres_representation = compute_users_factors(items_genres_representation);
+    users_representation = compute_users_factors(items_representation);
 }
 
 void ContentRecommender::compute_similarities() {
     DEBUG_ONLY(cout << "Computing similarities" << endl);
-    compute_similarities(items_genres_representation, users_genres_representation);
+    compute_similarities(items_representation, users_representation);
 }
 
 void ContentRecommender::clear_utility_matrix() {
     utility_matrix.clear();
+}
+
+void ContentRecommender::print_predictions() {
+    cout << "UserId:ItemId,Prediction" << endl;
+    for (size_t idx_target = 0; idx_target < targets_predictions.size(); idx_target ++ ) {
+        cout <<  targets[idx_target][0] <<  ":" << targets[idx_target][1] << "," << targets_predictions[idx_target] << endl;
+    }
 }
 
 void ContentRecommender::do_predictions() {
@@ -327,5 +372,9 @@ void ContentRecommender::do_predictions() {
         }
         cout <<  targets[idx_target][0] <<  ":" << targets[idx_target][1] << "," << vote_prediction << endl;
     }
-    DEBUG_ONLY(cout << "Missing: " << missing  << " Targets: " << targets.size() << endl;)
+//    DEBUG_ONLY(cout << "Missing: " << missing  << " Targets: " << targets.size() << endl;)
+}
+
+void ContentRecommender::do_content_predictions() {
+    do_content_predictions(items_representation, users_representation);
 }

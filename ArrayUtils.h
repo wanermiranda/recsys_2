@@ -15,7 +15,7 @@
 using namespace std;
 
 template<typename T>
-string vector2String(vector<T> vector1) {
+string vector2String(const vector<T> &vector1) {
     stringstream output;
     output  << "[ ";
     for (auto value: vector1) output << value  << ' ';
@@ -24,7 +24,7 @@ string vector2String(vector<T> vector1) {
 }
 
 template<typename T1, typename T2>
-string vectorPairs2String(vector<pair<T1, T2>> vector1) {
+string vectorPairs2String(const vector<pair<T1, T2>> &vector1) {
     stringstream output;
     output  << "[ ";
     for (auto value: vector1) output << value.first  << ':' << value.second << ' ';
@@ -51,12 +51,22 @@ template <typename T> T *alloc_1D_array(size_t N) {
 }
 
 template <typename T>
-T find_by_value(std::vector<T> vector, T value){
+T find_by_value(const std::vector<T> &vector, T value){
     auto it = std::find(vector.begin(), vector.end(), value);
     if (it == vector.end())
         exit(42);
     return it - vector.begin();
 }
 
-
+template <typename T> void append_vectors(std::vector<T> &target, const std::vector<T> &source){
+    if (target.empty())
+    {
+        target = source;
+    }
+    else
+    {
+        target.reserve(target.size() + source.size());
+        std::copy(std::begin(source), std::end(source), std::back_inserter(target));
+    }
+}
 #endif //TP1_RECSYS_ARRAYUTILS_H

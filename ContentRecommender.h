@@ -28,8 +28,16 @@ public:
     void clear_utility_matrix();
     void do_predictions();
 
+    void do_content_predictions(vector<vector<float>> &items_representations, vector<vector<float>> &users_representations);
+
+    void print_predictions();
+
+    void do_content_predictions();
+
 private:
     // Unique terms encountered in the contents file
+    set<string> unique_main_terms;
+
     set<string> unique_terms;
     set<string> unique_genres;
     set<string> unique_actors;
@@ -37,7 +45,8 @@ private:
     set<string> unique_awards;
 
     // Inverse Document Frequency
-    vector<float> genres_idf;
+//    vector<float> genres_idf;
+    vector<float> main_terms_idf;
 
     // list of items and users with their positions in the utility matrix
     unordered_map<string, size_t> items;
@@ -49,10 +58,12 @@ private:
 
     // target users to filter the vector sim computation
     set<size_t> target_users;
+    set<size_t> target_items;
 
     // targets listed
     vector<vector<string> > targets;
     vector<pair<size_t, size_t>> targets_positions;
+    vector<float> targets_predictions;
     vector<vector<pair<size_t, float>>> similar_items_NN;
 
 
@@ -70,8 +81,8 @@ private:
     vector<vector<float>> utility_matrix;
 
     // Item Content Representations
-    vector<vector<float>> items_genres_representation;
-    vector<vector<float>> users_genres_representation;
+    vector<vector<float>> items_representation;
+    vector<vector<float>> users_representation;
 
     int total_items;
 
@@ -83,6 +94,9 @@ private:
 
 
     vector<vector<float>> compute_users_factors(vector<vector<float>> items_representations);
+
+
+    void register_term_frequency(const string &value, set<string> &unique_values, vector<float> &values_idf) const;
 };
 
 

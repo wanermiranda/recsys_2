@@ -26,8 +26,13 @@ public:
     vector<string> Directors;
     vector<string> Awards;
     vector<string> Actors;
+    vector<string> PlotTerms;
     string Plot;
     size_t Year;
+
+    vector<string> MainTerms;
+
+
 
     ItemContent(string json_contents, size_t item_pos, string item_id);
 
@@ -37,13 +42,11 @@ public:
 
     void analyze_terms();
 
-    vector<pair<string, size_t>> NTerms;
-
-
 private:
-
+    vector<pair<string, size_t>> plot_pair_terms;
     vector<size_t> main_factors_vector;
     vector<size_t> secundary_factors_vector;
+    int main_term;
 };
 
 

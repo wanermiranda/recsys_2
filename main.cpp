@@ -27,9 +27,9 @@ int main(int argc, char **argv) {
 
     recommender.compute_users_factors_matrix();
 
-    recommender.compute_similarities();
+    recommender.do_content_predictions();
 
-    recommender.do_predictions();
+    recommender.print_predictions();
 
     DEBUG_ONLY(cout << "Finished " << endl);
 

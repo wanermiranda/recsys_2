@@ -10,12 +10,16 @@ APPNAME = recommender
 #Object
 OBJS = *.cpp *.h
 		
-release : ; $(G++) $(OBJS) -o $(APPNAME) $(LIBS) $(CFLAGS) $(OPTS)
+release 	: ; $(G++) $(OBJS) -o $(APPNAME) $(LIBS) $(CFLAGS) $(OPTS) 
 
-debug	: ; $(G++) $(OBJS) -o $(APPNAME) $(LIBS) $(CFLAGS) $(DEBUG)
-	 gdb --args ./recommender content.csv ratings.csv targets.csv
-run	: ; make release 
-	./recommender content.csv ratings.csv targets.csv
-all	:
+debug  		: ; $(G++) -DDEBUG $(OBJS) -o $(APPNAME) $(LIBS) $(CFLAGS) $(DEBUG)
+
+run_debug	: ; make debug
+	 	gdb --args ./recommender content.csv ratings.csv targets.csv
+run_test	: ; $(G++) -DDEBUG $(OBJS) -o $(APPNAME) $(LIBS) $(CFLAGS) $(OPTS)   
+		time -v ./recommender content.csv ratings.csv targets.csv > out.stat
+run		: ; make release 
+		./recommender content.csv ratings.csv targets.csv > out.stat
+all		:
 clean :
 	rm -f $(APPNAME) *.o
