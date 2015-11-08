@@ -1,0 +1,267 @@
+[gorigan@tornado recsys_2]$ make run_test 
+g++ -DDEBUG *.cpp *.h -o recommender -lpthread -std=c++11  -O3   
+time -v ./recommender content.csv ratings.csv targets.csv > out.stat
+	Command being timed: "./recommender content.csv ratings.csv targets.csv"
+	User time (seconds): 734.06
+	System time (seconds): 3.05
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 12:17.38
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 6214572
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 1848818
+	Voluntary context switches: 8
+	Involuntary context switches: 1680
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 6376
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+[gorigan@tornado recsys_2]$ make run_test 
+g++ -DDEBUG *.cpp *.h -o recommender -lpthread -std=c++11  -O3   
+time -v ./recommender content.csv ratings.csv targets.csv > out.stat
+^CCommand terminated by signal 2
+	Command being timed: "./recommender content.csv ratings.csv targets.csv"
+	User time (seconds): 209.50
+	System time (seconds): 2.37
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:31.94
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 6214624
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 1848816
+	Voluntary context switches: 1
+	Involuntary context switches: 434
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 472
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Makefile:19: recipe for target 'run_test' failed
+make: *** [run_test] Error 2
+
+[gorigan@tornado recsys_2]$ make run_test 
+g++ -DDEBUG *.cpp *.h -o recommender -lpthread -std=c++11  -O3   
+time -v ./recommender content.csv ratings.csv targets.csv > out.stat
+^CCommand terminated by signal 2
+	Command being timed: "./recommender content.csv ratings.csv targets.csv"
+	User time (seconds): 145.32
+	System time (seconds): 2.23
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:27.60
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 6214572
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 1716895
+	Voluntary context switches: 1
+	Involuntary context switches: 157
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 416
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Makefile:19: recipe for target 'run_test' failed
+make: *** [run_test] Error 2
+
+[gorigan@tornado recsys_2]$ cd ..
+[gorigan@tornado UFMG]$ cd recsys
+[gorigan@tornado recsys]$ ls
+ArrayUtils.cpp  Makefile                     submission-rand.csv
+ArrayUtils.h    personalized_item_based.csv  targets_.csv
+avg1.csv        Predictor.cpp                targets.csv
+CMakeLists.txt  Predictor.h                  targets_test.csv
+CSVReader.cpp   ratings_.csv                 teste.cpp
+CSVReader.h     ratings.csv                  TP1MovieRecommendation.pdf
+distances.cpp   ratings_test.csv             TP1_Recsys
+distances.h     StringUtils.cpp              user2.csv
+main.cpp        StringUtils.h
+[gorigan@tornado recsys]$ vi ArrayUtils.h 
+[gorigan@tornado recsys]$ vi StringUtils.h 
+[gorigan@tornado recsys]$ vi ArrayUtils.cpp 
+[gorigan@tornado recsys]$ vi ArrayUtils.h 
+[gorigan@tornado recsys]$ make run_test 
+make: *** No rule to make target 'run_test'.  Stop.
+[gorigan@tornado recsys]$ cd ../recsys_2
+[gorigan@tornado recsys_2]$ make run_test 
+g++ -DDEBUG *.cpp *.h -o recommender -lpthread -std=c++11  -O3   
+time -v ./recommender content.csv ratings.csv targets.csv > out.stat
+^CCommand terminated by signal 2
+	Command being timed: "./recommender content.csv ratings.csv targets.csv"
+	User time (seconds): 274.66
+	System time (seconds): 1.25
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:36.04
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3470528
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 917276
+	Voluntary context switches: 3
+	Involuntary context switches: 916
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 528
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Makefile:19: recipe for target 'run_test' failed
+make: *** [run_test] Error 2
+
+[gorigan@tornado recsys_2]$ make run_test 
+g++ -DDEBUG *.cpp *.h -o recommender -lpthread -std=c++11  -O3   
+time -v ./recommender content.csv ratings.csv targets.csv > out.stat
+	Command being timed: "./recommender content.csv ratings.csv targets.csv"
+	User time (seconds): 200.66
+	System time (seconds): 1.79
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:22.52
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3396200
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 868338
+	Voluntary context switches: 7
+	Involuntary context switches: 363
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 6184
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+[gorigan@tornado recsys_2]$ make run_test 
+g++ -DDEBUG *.cpp *.h -o recommender -lpthread -std=c++11  -O3   
+time -v ./recommender content.csv ratings.csv targets.csv > out.stat
+	Command being timed: "./recommender content.csv ratings.csv targets.csv"
+	User time (seconds): 13.83
+	System time (seconds): 1.70
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:15.54
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3173272
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 795728
+	Voluntary context switches: 10
+	Involuntary context switches: 78
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 6120
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+[gorigan@tornado recsys_2]$ make run_test 
+g++ -DDEBUG *.cpp *.h -o recommender -lpthread -std=c++11  -O3   
+time -v ./recommender content.csv ratings.csv targets.csv > out.stat
+	Command being timed: "./recommender content.csv ratings.csv targets.csv"
+	User time (seconds): 581.73
+	System time (seconds): 2.03
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 9:44.02
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3510208
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 976101
+	Voluntary context switches: 15
+	Involuntary context switches: 1261
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 6280
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+[gorigan@tornado recsys_2]$ make run_test 
+g++ -DDEBUG *.cpp *.h -o recommender -lpthread -std=c++11  -O3   
+
+time -v ./recommender content.csv ratings.csv targets.csv > out.stat
+	Command being timed: "./recommender content.csv ratings.csv targets.csv"
+	User time (seconds): 2198.49
+	System time (seconds): 3.39
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 36:42.78
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3868920
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 1407266
+	Voluntary context switches: 19
+	Involuntary context switches: 7487
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 6776
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+[gorigan@tornado recsys_2]$ 
+[gorigan@tornado recsys_2]$ make run_test 
+g++ -DDEBUG *.cpp *.h -o recommender -lpthread -std=c++11  -O3   
+time -v ./recommender content.csv ratings.csv targets.csv > out.stat
+	Command being timed: "./recommender content.csv ratings.csv targets.csv"
+	User time (seconds): 2884.91
+	System time (seconds): 2.75
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 48:08.67
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 4049428
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 1608909
+	Voluntary context switches: 7
+	Involuntary context switches: 6688
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 6976
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

@@ -11,8 +11,40 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <unordered_map>
 
 using namespace std;
+
+template <typename K, typename V>
+void increment_insert_map(unordered_map<K, set<V>> &map, K key, V value) {
+    auto it = map.find(key);
+    if(it != map.end())
+        it->second.insert(value);
+    else {
+        set<V> values = {value};
+        map.insert({key, values});
+    }
+}
+
+template <typename T>
+T **alloc2dArray( size_t nRows, size_t nCols)
+{
+    T **dynamicArray;
+
+    dynamicArray = new T*[nRows];
+    for( int i = 0 ; i < nRows ; i++ )
+        dynamicArray[i] = new T [nCols];
+
+    return dynamicArray;
+}
+
+template <typename T>
+void free2DArray(T** dynamicArray, size_t nRows)
+    {
+        for( int i = 0 ; i < nRows ; i++ )
+            delete[]  dynamicArray[i];
+        delete dynamicArray;
+    }
 
 template<typename T>
 string vector2String(const vector<T> &vector1) {

@@ -27,10 +27,13 @@ public:
     vector<string> Awards;
     vector<string> Actors;
     vector<string> PlotTerms;
+    vector<string> Title;
     string Plot;
     size_t Year;
 
+
     vector<string> MainTerms;
+//    set<size_t> MainTermsPositions;
 
 
 
@@ -44,9 +47,7 @@ public:
 
 private:
     vector<pair<string, size_t>> plot_pair_terms;
-    vector<size_t> main_factors_vector;
-    vector<size_t> secundary_factors_vector;
-    int main_term;
+
 };
 
 

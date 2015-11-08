@@ -1,0 +1,23 @@
+/*for (int term_pos = 0; term_pos < term_count; term_pos++) {
+                float term_sum_value = 0.0;
+                // Computing items references to a term
+                for (int item_pos = 0; item_pos < items.size(); item_pos++) {
+                    if ((utility_matrix[user_pos][item_pos] != 0)
+                        && (items_representations[item_pos][term_pos] != 0)) {
+
+                        item_count++;
+                        term_sum_value += utility_matrix[user_pos][item_pos]
+                                          * items_representations[item_pos][term_pos];
+
+                    }
+                }
+                // If there are items rated by the user with this term push it to the representation
+                if (item_count > 0) {
+                    users_representations[user_idx][term_pos] = term_sum_value / item_count;
+                }
+                else {
+                    users_representations[user_idx][term_pos] = 0;
+                    zero_count++;
+                }
+
+            } */

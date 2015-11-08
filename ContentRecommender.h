@@ -24,9 +24,9 @@ public:
     void build_utility_matrix();
     void build_representations();
     void compute_users_factors_matrix();
-    void compute_similarities();
+
     void clear_utility_matrix();
-    void do_predictions();
+
 
     void do_content_predictions(vector<vector<float>> &items_representations, vector<vector<float>> &users_representations);
 
@@ -37,12 +37,12 @@ public:
 private:
     // Unique terms encountered in the contents file
     set<string> unique_main_terms;
-
-    set<string> unique_terms;
-    set<string> unique_genres;
-    set<string> unique_actors;
-    set<string> unique_directors;
-    set<string> unique_awards;
+    // Indexing the items by the each term
+    unordered_map<size_t, set<size_t>> items_per_terms;
+//    set<string> unique_genres;
+//    set<string> unique_actors;
+//    set<string> unique_directors;
+//    set<string> unique_awards;
 
     // Inverse Document Frequency
 //    vector<float> genres_idf;
@@ -75,28 +75,28 @@ private:
     vector<vector<float>> users_stats;
 
     // Storing the ratings with rows to build the utility matrix after
-    vector<vector<string>> ratings_rows;
+    vector<tuple<size_t, size_t, float>> user_item_ratings;
 
     // Utility matrix used to make faster the vote computation
-    vector<vector<float>> utility_matrix;
+    float **utility_matrix;
 
     // Item Content Representations
-    vector<vector<float>> items_representation;
-    vector<vector<float>> users_representation;
+    float **items_representation;
+    size_t items_representations_size;
+    float **users_representation;
+    size_t users_representations_size;
+
 
     int total_items;
 
-    vector<float> create_representation(set<string> &terms, vector<string> &hits, vector<float> &idf);
+    float * create_representation(set<string> &terms, vector<string> &hits, vector<float> &idf);
 
 
-    void compute_similarities(vector<vector<float>> &items_representations,
-                              vector<vector<float>> &users_representations);
+    float **compute_users_representations(float **items_representations, size_t term_count);
 
+    void do_content_predictions(float **items_representations, float **users_representations);
 
-    vector<vector<float>> compute_users_factors(vector<vector<float>> items_representations);
-
-
-    void register_term_frequency(const string &value, set<string> &unique_values, vector<float> &values_idf) const;
+    size_t register_term_frequency(string term, set<string> &unique_values, vector<float> &values_idf, size_t item_pos);
 };
 
 

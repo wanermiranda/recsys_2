@@ -20,6 +20,11 @@ ItemContent::ItemContent(string json_contents, size_t item_pos, string item_id) 
     for (auto token: content_values) {
         string token_value = get_token_value(token);
 
+        if (starts_with(token, "Title")) {
+            remove_chars(token_value, "\\/0123456789[]{},-");
+            Title = split(token_value, ' ');
+        }
+
         if (starts_with(token, "Genre"))
             Genres =  split(token_value, ',');
 
@@ -49,11 +54,17 @@ ItemContent::ItemContent(string json_contents, size_t item_pos, string item_id) 
 
     analyze_terms();
 
+    append_vectors<string>(MainTerms, Title);
+    append_vectors<string>(MainTerms, Title);
+//    append_vectors<string>(MainTerms, Title);
+
     append_vectors<string>(MainTerms, Genres);
-    append_vectors<string>(MainTerms, Directors);
-    append_vectors<string>(MainTerms, Awards);
-    append_vectors<string>(MainTerms, Actors);
-//    append_vectors<string>(MainTerms, PlotTerms);
+    append_vectors<string>(MainTerms, Genres);
+    append_vectors<string>(MainTerms, Genres);
+//    append_vectors<string>(MainTerms, Directors);
+//    append_vectors<string>(MainTerms, Awards);
+//    append_vectors<string>(MainTerms, Actors);
+    append_vectors<string>(MainTerms, PlotTerms);
 
 
 }
@@ -137,3 +148,4 @@ void ItemContent::analyze_terms() {
 ItemContent::ItemContent() {
 
 }
+

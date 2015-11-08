@@ -8,13 +8,12 @@
 #define RECSYS_2_CONSTANTS_H
 #define FLOAT_NONE_VALUE 0
 #define VOTE_MAX_VALUE 10.0f
-#define N_TERMS 7
-#define NN 30
+#define N_TERMS 20
 //#define DEBUG
 
 const std::string NONE_STR = "N/A";
 const std::string EMPTY_STR = "";
-const std::set<std::string> UNWANTED_TERMS = {"this", "that","they", "from", "what", "with" };
+const std::set<std::string> UNWANTED_TERMS = {"this", "that","they", "from", "what", "with", "a", "the", "and"};
 
 
 #endif //RECSYS_2_CONSTANTS_H

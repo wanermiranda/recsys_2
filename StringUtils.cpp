@@ -3,6 +3,7 @@
 //
 
 #include "StringUtils.h"
+#include "Constants.h"
 #include <algorithm>
 using namespace std;
 
@@ -10,11 +11,29 @@ vector<string> &split(const string &s, char delim, vector<string> &elems) {
     stringstream ss(s);
     string item;
     while (getline(ss, item, delim)) {
-        elems.push_back(item);
+        if (UNWANTED_TERMS.find(item) == UNWANTED_TERMS.end())
+            elems.push_back(item);
     }
     return elems;
 }
 
+
+
+string remove_unwanted(const string &s, char delim) {
+    string elems;
+    remove_unwanted(s, delim, elems);
+    return elems;
+}
+
+string &remove_unwanted(const string &s, char delim, string &elems) {
+    stringstream ss(s);
+    string item;
+    while (getline(ss, item, delim)) {
+        if (UNWANTED_TERMS.find(item) == UNWANTED_TERMS.end())
+            elems += delim + item;
+    }
+    return elems;
+}
 
 vector<string> split(const string &s, char delim) {
     vector<string> elems;

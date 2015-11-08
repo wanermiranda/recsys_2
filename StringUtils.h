@@ -9,6 +9,8 @@
 #include <sstream>
 #include <vector>
 using namespace std;
+string &remove_unwanted(const string &s, char delim, string &elems);
+string remove_unwanted(const string &s, char delim);
 vector<string> split(const string &s, char delim);
 vector<string> split(const string &str, const string &delimiter);
 void remove_chars(string &s, string chars);

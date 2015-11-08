@@ -31,6 +31,8 @@ int main(int argc, char **argv) {
 
     recommender.print_predictions();
 
+    recommender.clear_utility_matrix();
+
     DEBUG_ONLY(cout << "Finished " << endl);
 
     exit(0);
