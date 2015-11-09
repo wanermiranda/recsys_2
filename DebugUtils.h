@@ -8,6 +8,13 @@
 #include <iostream>
 #include <stddef.h>
 #include <vector>
+
+#ifdef EVAL
+#define NOT_EVAL(x)
+#else 
+#define NOT_EVAL(x) x
+#endif 
+
 #ifdef DEBUG
 #define DEBUG_STDERR(x) (std::cerr << (x))
 #define DEBUG_ONLY(x) x

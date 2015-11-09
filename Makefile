@@ -16,8 +16,8 @@ debug  		: ; $(G++) -DDEBUG $(OBJS) -o $(APPNAME) $(LIBS) $(CFLAGS) $(DEBUG)
 
 run_debug	: ; make debug
 	 	gdb --args ./recommender content.csv ratings.csv targets.csv
-run_test	: ; $(G++) -DDEBUG $(OBJS) -o $(APPNAME) $(LIBS) $(CFLAGS) $(OPTS)   
-		time -v ./recommender content.csv ratings.csv targets.csv > out.stat
+run_test	: ; $(G++) -DEVAL $(OBJS) -o $(APPNAME) $(LIBS) $(CFLAGS) $(OPTS)   
+		time -v ./recommender content.csv ratings.csv target_tests.csv > out.stat
 run		: ; make release 
 		./recommender content.csv ratings.csv targets.csv > out.stat
 all		:

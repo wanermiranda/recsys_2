@@ -81,7 +81,7 @@ ItemContent::ItemContent(string json_contents, size_t item_pos, string item_id) 
     append_vectors<string>(MainTerms, Awards);
 //    append_vectors<string>(MainTerms, Awards);
 //    append_vectors<string>(MainTerms, Actors);
-    append_vectors<string>(MainTerms, PlotTerms);
+    // append_vectors<string>(MainTerms, PlotTerms);
 
     Title.clear();
     Genres.clear();

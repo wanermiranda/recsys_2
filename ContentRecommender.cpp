@@ -28,22 +28,24 @@ void ContentRecommender::read_contents(char *filename) {
         total_items ++;
         string item = row_reader[0];
         item = remove_chars(item, ",");
-        size_t item_pos = items.at(item);
-        if (target_items.find(item_pos) != target_items.end()) {
-            string content = row_reader[1];
-            content = remove_chars(content, "{}");
-            ItemContent itemContent(content, item_pos, item);
-            item_contents[item_pos] = itemContent;
-            //itemContent.print_debug();
+        if (items.find(item) != items.end()) {
+            size_t item_pos = items.at(item);
+            if (target_items.find(item_pos) != target_items.end()) {
+                string content = row_reader[1];
+                content = remove_chars(content, "{}");
+                ItemContent itemContent(content, item_pos, item);
+                item_contents[item_pos] = itemContent;
+                //itemContent.print_debug();
 
-            // Update unique terms
-            for (auto term: itemContent.MainTerms) {
-//                itemContent.push_back_term_pos(register_term_frequency(term, unique_main_terms, main_terms_idf));
-                register_term_frequency(term, unique_main_terms,
-                                        main_terms_idf, item_pos);
+                // Update unique terms
+                for (auto term: itemContent.MainTerms) {
+                    //itemContent.push_back_term_pos(register_term_frequency(term, unique_main_terms, main_terms_idf));
+                    register_term_frequency(term, unique_main_terms,
+                                            main_terms_idf, item_pos);
+                }
+
+                DEBUG_ONLY(cout << "Items read: " << total_items << endl);
             }
-
-            DEBUG_ONLY(cout << "Items read: " << total_items << endl);
         }
     }
 
@@ -239,13 +241,15 @@ void ContentRecommender::do_content_predictions(vector<vector<float>> &items_rep
         // Since the representation was created only for the target users we need to locate it into the set
         size_t target_user_pos = distance(target_users.find(user_pos), target_users.end());
         size_t item_pos = targets_positions[idx_target].second;
-        float vote = 0;
+        float vote = 0.0f;
         // ignore if there is a Null vector in the pair query x target
         if (users_vectors_norms[target_user_pos] * items_vectors_norms[item_pos] > 0) {
             float cosine = dot_product(users_representations[target_user_pos], items_representations[item_pos]) /
                            (users_vectors_norms[target_user_pos] * items_vectors_norms[item_pos]);
-            vote = cosine * VOTE_MAX_VALUE;
-
+            vote = cosine * VOTE_MAX_VALUE * 1000.0f;
+            if (vote > VOTE_MAX_VALUE) vote = item_contents[item_pos].imdbRating;
+            if (cosine == 0) vote = item_contents[item_pos].imdbRating;
+/*          if (vote > VOTE_MAX_VALUE) 
             if (vote > max) max = vote;
             if (vote < min) min = vote;
 
@@ -254,7 +258,7 @@ void ContentRecommender::do_content_predictions(vector<vector<float>> &items_rep
             if(cosine < 0.5) {
                 vote = item_contents[item_pos].imdbRating;
             }
-
+*/
         }
         else  {
             vote = item_contents[item_pos].imdbRating;
@@ -337,9 +341,9 @@ void ContentRecommender::clear_representations() {
 
 void ContentRecommender::print_predictions()
 {
-    cout << "UserId:ItemId,Prediction" << endl;
+    NOT_EVAL(cout << "UserId:ItemId,Prediction" << endl;)
     for (size_t idx_target = 0; idx_target < targets_predictions.size(); idx_target ++ ) {
-        cout <<  targets[idx_target][0] <<  ":" << targets[idx_target][1] << "," << targets_predictions[idx_target] << endl;
+        cout NOT_EVAL(<<  targets[idx_target][0] <<  ":" << targets[idx_target][1] << "," ) << targets_predictions[idx_target] << endl;
     }
 }
 
