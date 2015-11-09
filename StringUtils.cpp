@@ -5,27 +5,24 @@
 #include "StringUtils.h"
 #include "Constants.h"
 #include <algorithm>
+#include <algorithm>
+#include <sstream>
+#include <iterator>
 using namespace std;
 
-vector<string> &split(const string &s, char delim, vector<string> &elems) {
-    stringstream ss(s);
-    string item;
-    while (getline(ss, item, delim)) {
-        if (UNWANTED_TERMS.find(item) == UNWANTED_TERMS.end())
-            elems.push_back(item);
-    }
-    return elems;
+
+string str2lower(string str) {
+    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+    return str;
 }
 
-
-
-string remove_unwanted(const string &s, char delim) {
+string remove_unwanted(const string s, char delim) {
     string elems;
     remove_unwanted(s, delim, elems);
     return elems;
 }
 
-string &remove_unwanted(const string &s, char delim, string &elems) {
+string remove_unwanted(const string s, char delim, string &elems) {
     stringstream ss(s);
     string item;
     while (getline(ss, item, delim)) {
@@ -35,32 +32,33 @@ string &remove_unwanted(const string &s, char delim, string &elems) {
     return elems;
 }
 
-vector<string> split(const string &s, char delim) {
-    vector<string> elems;
-    split(s, delim, elems);
-    return elems;
-}
+//vector<string> split(const string s, char delim) {
+//    vector<string> elems;
+//    split(s, delim);
+//    return elems;
+//}
 
-vector<string> split(const string &str, const string &delimiter) {
-    size_t pos = 0;
-    string token;
-    vector<string> output;
-    string s = str;
-    while ((pos = s.find(delimiter)) != std::string::npos) {
-        token = s.substr(0, pos);
-        output.push_back(token);
-        s.erase(0, pos + delimiter.length());
+vector<string> split(const string str, const string delimiter) {
+    std::vector<std::string> tokens;
+    int start = 0, end = 0;
+    while ((end = str.find(delimiter, start)) != std::string::npos) {
+        string term =str.substr(start, end - start);
+        if (UNWANTED_TERMS.find(term) == UNWANTED_TERMS.end())
+            tokens.push_back(term);
+        start = end + 1;
     }
-    return output;
+    tokens.push_back(str.substr(start));
+    return tokens;
 }
 
-void remove_chars(string &s, string chars) {
+string remove_chars(string s, const string chars) {
     s.erase(remove_if(s.begin(), s.end(), [&chars](const char& c) {
         return chars.find(c) != string::npos;
     }), s.end());
+    return s;
 
 }
 
-bool starts_with(const string &str, const string &prefix) {
+bool starts_with(const string str, const string prefix) {
     return (!str.compare(0, prefix.size(), prefix));
 }

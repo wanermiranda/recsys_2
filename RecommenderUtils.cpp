@@ -13,14 +13,6 @@ void init_utility_matrix(const unordered_map<string, size_t> &items, const unord
     }
 }
 
-void init_utility_matrix(const unordered_map<string, size_t> &items, const unordered_map<string, size_t> &users,
-                         float **utility_matrix) {
-    for (int user = 0; user < users.size(); user++) {
-        for (int item = 0; item < items.size(); item++)
-            utility_matrix[user][item] = FLOAT_NONE_VALUE;
-    }
-}
-
 void compute_stats_avg(vector<vector<float>> &stats) {// Overall average
     for (size_t index = 0; index < stats.size(); index++)
         if (stats[index][2] != -1){

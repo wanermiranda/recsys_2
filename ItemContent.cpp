@@ -15,80 +15,90 @@
 ItemContent::ItemContent(string json_contents, size_t item_pos, string item_id) {
     ItemId = item_id;
     ItemPos = item_pos;
+    vector<string> Genres;
+    vector<string> Directors;
+    vector<string> Awards;
+    vector<string> Actors;
+    vector<string> PlotTerms;
+    vector<string> Title;
 
     vector<string> content_values = split(json_contents, "\",\"");
-    for (auto token: content_values) {
+    for (auto raw_token: content_values) {
+        string token(raw_token);
+        token = str2lower(token);
+        token = remove_chars(token, "\",");
         string token_value = get_token_value(token);
 
-        if (starts_with(token, "Title")) {
-            remove_chars(token_value, "\\/0123456789[]{},-");
-            Title = split(token_value, ' ');
+        if (!starts_with(token, "year") && !starts_with(token, "imdbrating"))
+            token_value = remove_chars(token_value, INVALID_CHARS);
+
+        if (starts_with(token, "title")) {
+            Title = split(token_value, " ");
         }
+        else if (starts_with(token, "genre"))
+            Genres =  split(token_value, ",");
 
-        if (starts_with(token, "Genre"))
-            Genres =  split(token_value, ',');
+        else if (starts_with(token, "director")) {
+            token_value = remove_chars(token_value," ");
+            Directors = split(token_value, ",");
+        }
+        else if (starts_with(token, "awards"))
+            Awards = split(token_value, ",");
 
-        else if (starts_with(token, "Director"))
-            Directors = split(token_value, ',');
-
-        else if (starts_with(token, "Awards"))
-            Awards = split(token_value, ',');
-
-        else if (starts_with(token, "Actors"))
-            Actors = split(token_value, ',');
-
-        else if (starts_with(token, "Plot"))
+        else if (starts_with(token, "actors")) {
+            token_value = remove_chars(token_value, " ");
+            Actors = split(token_value, ",");
+        }
+        else if (starts_with(token, "plot"))
             Plot = token_value;
 
-        else if (starts_with(token, "Year")) {
+        else if (starts_with(token, "year")) {
             if (token_value != NONE_STR)
                 Year = stoi(token_value);
             else Year = 0;
         }
-        else if (starts_with(token, "imdbRating")) {
+        else if (starts_with(token, "imdbrating")) {
             if (token_value != NONE_STR)
                 imdbRating = stof(token_value);
             else imdbRating = FLOAT_NONE_VALUE;
         }
     }
 
-    analyze_terms();
+    analyze_terms(PlotTerms);
 
     append_vectors<string>(MainTerms, Title);
-    append_vectors<string>(MainTerms, Title);
+//    append_vectors<string>(MainTerms, Title);
 //    append_vectors<string>(MainTerms, Title);
 
     append_vectors<string>(MainTerms, Genres);
-    append_vectors<string>(MainTerms, Genres);
-    append_vectors<string>(MainTerms, Genres);
+//    append_vectors<string>(MainTerms, Genres);
+//    append_vectors<string>(MainTerms, Genres);
+//    append_vectors<string>(MainTerms, Genres);
+//    append_vectors<string>(MainTerms, Genres);
+//    append_vectors<string>(MainTerms, Genres);
+//    append_vectors<string>(MainTerms, Genres);
 //    append_vectors<string>(MainTerms, Directors);
+    append_vectors<string>(MainTerms, Awards);
 //    append_vectors<string>(MainTerms, Awards);
 //    append_vectors<string>(MainTerms, Actors);
     append_vectors<string>(MainTerms, PlotTerms);
 
-
+    Title.clear();
+    Genres.clear();
+    Directors.clear();
+    Actors.clear();
+    PlotTerms.clear();
 }
 
 string ItemContent::get_token_value(const string &str) {
     string local_str(str);
-    remove_chars(local_str, "\"");
-    vector<string> key_value = split(local_str, ':');
+    local_str = remove_chars(local_str, "\"");
+    vector<string> key_value = split(local_str, ":");
     local_str = key_value[1];
-    remove_chars(local_str, "\"");
     return local_str;
 }
 
-void ItemContent::print_debug(){
- DEBUG_ONLY( cout << "Genres: " << vector2String<string>(Genres)<< endl
-                    << "Year: " << Year << endl
-                    << "imdbRating: " << imdbRating << endl;
- );
-    DEBUG_ONLY(cout  << "Directors: " << vector2String<string>(Directors) << endl
-                       << "Awards: " << vector2String<string>(Awards) << endl
-                       << "Actors: " << vector2String<string>(Actors) << endl);
-}
-
-void ItemContent::analyze_terms() {
+void ItemContent::analyze_terms(vector<string> &PlotTerms) {
     unordered_map<string, size_t> terms;
     string top_terms[N_TERMS];
 
@@ -99,11 +109,9 @@ void ItemContent::analyze_terms() {
         top_terms_count[i] = SIZE_MAX;
     }
     // Loop through all words in the dictionary
-    vector<string> raw_terms = split(Plot, ' ');
-    for (string raw_term: raw_terms) {
-        string term(raw_term);
-        for_each(term.begin(), term.end(), convert2lower());
-        remove_chars(term, "\',.:;()[]");
+    vector<string> raw_terms = split(Plot, " ");
+    for (string term: raw_terms) {
+        term = str2lower(term);
         if ((UNWANTED_TERMS.find(term) == UNWANTED_TERMS.end())
             && (term.length() > 3)) {
             if (terms.find(term) == terms.end()) {
@@ -114,6 +122,7 @@ void ItemContent::analyze_terms() {
 
         }
     }
+
     for (auto term_pair: terms) {
         // Looking for the N TERMS with most occurrences
         size_t hold_count = term_pair.second;
@@ -135,17 +144,23 @@ void ItemContent::analyze_terms() {
             }
         }
     }
+
     // Transferring the most common terms to the attributes
     for (int i = 0; i < N_TERMS; i++)
         if (top_terms[i] != EMPTY_STR){
-            plot_pair_terms.push_back(make_pair(top_terms[i], top_terms_count[i]));
+//            plot_pair_terms.push_back(make_pair(top_terms[i], top_terms_count[i]));
             PlotTerms.push_back(top_terms[i]);
             //DEBUG_ONLY(cout << i << "th pair: <" << top_terms[i] << ',' << top_terms_count[i] << '>' << endl);
         }
 
+    terms.clear();
+    raw_terms.clear();
 }
 
 ItemContent::ItemContent() {
 
 }
 
+void ItemContent::clear_terms() {
+    MainTerms.clear();
+}

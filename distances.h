@@ -15,9 +15,9 @@ auto distance_comparer = [](const std::pair<float, size_t> &a, const std::pair<f
 };
 
 
-float vector_norm(vector<float> vector1);
+float vector_norm(vector<float> &vector1);
 
-float vector_norm(float *vector1, size_t sz);
+float vector_norm(vector<float> &vector1, size_t sz);
 
 float dot_product(vector<float> &vector1, vector<float> &vector2);
 

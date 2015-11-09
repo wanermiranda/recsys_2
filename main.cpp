@@ -29,9 +29,9 @@ int main(int argc, char **argv) {
 
     recommender.do_content_predictions();
 
-    recommender.print_predictions();
+    recommender.clear_representations();
 
-    recommender.clear_utility_matrix();
+    recommender.print_predictions();
 
     DEBUG_ONLY(cout << "Finished " << endl);
 

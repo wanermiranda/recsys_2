@@ -4,6 +4,7 @@
 
 #ifndef TP1_RECSYS_ITEMCONTENT_H
 #define TP1_RECSYS_ITEMCONTENT_H
+
 #include <string>
 #include <stddef.h>
 #include <vector>
@@ -21,13 +22,8 @@ public:
     size_t ItemPos; // Position in the vectors and utility matrix
 
     // Bellow there is the selected metadata from the item
-    vector<string> Genres;
     float imdbRating;
-    vector<string> Directors;
-    vector<string> Awards;
-    vector<string> Actors;
-    vector<string> PlotTerms;
-    vector<string> Title;
+
     string Plot;
     size_t Year;
 
@@ -39,15 +35,15 @@ public:
 
     ItemContent(string json_contents, size_t item_pos, string item_id);
 
-    void print_debug();
-
     string get_token_value(const string &str);
 
-    void analyze_terms();
+
+    void clear_terms();
 
 private:
-    vector<pair<string, size_t>> plot_pair_terms;
+//    vector<pair<string, size_t>> plot_pair_terms;
 
+    void analyze_terms(vector<string> &PlotTerms);
 };
 
 

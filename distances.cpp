@@ -31,14 +31,14 @@ float manhattan_distance(vector<float> vector1, vector<float> vector2) {
     return dist;
 }
 
-float vector_norm(vector<float> vector1) {
+float vector_norm(vector<float> &vector1) {
     float norm = 0.0f;
     for (int idx = 0; idx < vector1.size(); idx++)
         norm += vector1[idx] * vector1[idx];
     return sqrt(norm);
 }
 
-float vector_norm(float *vector1, size_t sz) {
+float vector_norm(vector<float> &vector1, size_t sz) {
     float norm = 0.0f;
     for (int idx = 0; idx < sz; idx++)
         norm += vector1[idx] * vector1[idx];

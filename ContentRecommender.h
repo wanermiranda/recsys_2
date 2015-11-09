@@ -25,7 +25,7 @@ public:
     void build_representations();
     void compute_users_factors_matrix();
 
-    void clear_utility_matrix();
+    void clear_representations();
 
 
     void do_content_predictions(vector<vector<float>> &items_representations, vector<vector<float>> &users_representations);
@@ -37,9 +37,10 @@ public:
 private:
     // Unique terms encountered in the contents file
     set<string> unique_main_terms;
+    size_t unq_terms_sz;
     // Indexing the items by the each term
     unordered_map<size_t, set<size_t>> items_per_terms;
-//    set<string> unique_genres;
+    //    set<string> unique_genres;
 //    set<string> unique_actors;
 //    set<string> unique_directors;
 //    set<string> unique_awards;
@@ -64,7 +65,7 @@ private:
     vector<vector<string> > targets;
     vector<pair<size_t, size_t>> targets_positions;
     vector<float> targets_predictions;
-    vector<vector<pair<size_t, float>>> similar_items_NN;
+
 
 
     // Item Contents information
@@ -78,25 +79,25 @@ private:
     vector<tuple<size_t, size_t, float>> user_item_ratings;
 
     // Utility matrix used to make faster the vote computation
-    float **utility_matrix;
+    vector<vector<float>> utility_matrix;
 
     // Item Content Representations
-    float **items_representation;
+    vector<vector<float>> items_representation;
     size_t items_representations_size;
-    float **users_representation;
+    vector<vector<float>> users_representation;
     size_t users_representations_size;
 
 
     int total_items;
 
-    float * create_representation(set<string> &terms, vector<string> &hits, vector<float> &idf);
+    vector<float> create_representation(set<string> &terms, vector<string> &hits, vector<float> &idf);
 
 
-    float **compute_users_representations(float **items_representations, size_t term_count);
-
-    void do_content_predictions(float **items_representations, float **users_representations);
+    void compute_users_representations(vector<vector<float>> &items_representations, size_t term_count);
 
     size_t register_term_frequency(string term, set<string> &unique_values, vector<float> &values_idf, size_t item_pos);
+
+
 };
 
 
