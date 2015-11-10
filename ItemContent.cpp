@@ -26,8 +26,9 @@ ItemContent::ItemContent(string json_contents, size_t item_pos, string item_id) 
     for (auto raw_token: content_values) {
         string token(raw_token);
         token = str2lower(token);
-        token = remove_chars(token, "\",");
+        token = remove_chars(token, "\"");
         string token_value = get_token_value(token);
+        token = remove_chars(token, ",");
 
         if (!starts_with(token, "year") && !starts_with(token, "imdbrating"))
             token_value = remove_chars(token_value, INVALID_CHARS);
@@ -49,9 +50,10 @@ ItemContent::ItemContent(string json_contents, size_t item_pos, string item_id) 
             token_value = remove_chars(token_value, " ");
             Actors = split(token_value, ",");
         }
-        else if (starts_with(token, "plot"))
+        else if (starts_with(token, "plot")) {
+            token_value = remove_chars(token_value, ",");
             Plot = token_value;
-
+        }
         else if (starts_with(token, "year")) {
             if (token_value != NONE_STR)
                 Year = stoi(token_value);
@@ -64,24 +66,24 @@ ItemContent::ItemContent(string json_contents, size_t item_pos, string item_id) 
         }
     }
 
+
+//    append_vectors<string>(MainTerms, Title);
+
+//    append_vectors<string>(MainTerms, Genres);
+
+
+//    append_vectors<string>(MainTerms, Directors);
+
+//    append_vectors<string>(MainTerms, Awards);
+
+//    append_vectors<string>(MainTerms, Actors);
+
     analyze_terms(PlotTerms);
 
-    append_vectors<string>(MainTerms, Title);
-//    append_vectors<string>(MainTerms, Title);
-//    append_vectors<string>(MainTerms, Title);
+    append_vectors<string>(MainTerms, PlotTerms);
 
-    append_vectors<string>(MainTerms, Genres);
-//    append_vectors<string>(MainTerms, Genres);
-//    append_vectors<string>(MainTerms, Genres);
-//    append_vectors<string>(MainTerms, Genres);
-//    append_vectors<string>(MainTerms, Genres);
-//    append_vectors<string>(MainTerms, Genres);
-//    append_vectors<string>(MainTerms, Genres);
-//    append_vectors<string>(MainTerms, Directors);
-    append_vectors<string>(MainTerms, Awards);
-//    append_vectors<string>(MainTerms, Awards);
-//    append_vectors<string>(MainTerms, Actors);
-    // append_vectors<string>(MainTerms, PlotTerms);
+    for (string term: MainTerms)
+        UniqueMainTerms.insert(term);
 
     Title.clear();
     Genres.clear();
@@ -112,7 +114,7 @@ void ItemContent::analyze_terms(vector<string> &PlotTerms) {
     vector<string> raw_terms = split(Plot, " ");
     for (string term: raw_terms) {
         term = str2lower(term);
-        if ((UNWANTED_TERMS.find(term) == UNWANTED_TERMS.end())
+        if ((STOP_WORDS.find(term) == STOP_WORDS.end())
             && (term.length() > 3)) {
             if (terms.find(term) == terms.end()) {
                 terms.insert({term, 1});
@@ -163,4 +165,5 @@ ItemContent::ItemContent() {
 
 void ItemContent::clear_terms() {
     MainTerms.clear();
+    UniqueMainTerms.clear();
 }

@@ -40,10 +40,6 @@ private:
     size_t unq_terms_sz;
     // Indexing the items by the each term
     unordered_map<size_t, set<size_t>> items_per_terms;
-    //    set<string> unique_genres;
-//    set<string> unique_actors;
-//    set<string> unique_directors;
-//    set<string> unique_awards;
 
     // Inverse Document Frequency
 //    vector<float> genres_idf;
@@ -71,12 +67,9 @@ private:
     // Item Contents information
     vector<ItemContent> item_contents;
 
-    // The stats will hold the values for {count, avg, sum},
-    vector<vector<float>> items_stats;
-    vector<vector<float>> users_stats;
 
     // Storing the ratings with rows to build the utility matrix after
-    vector<tuple<size_t, size_t, float>> user_item_ratings;
+    vector<vector<float>> user_item_ratings;
 
     // Utility matrix used to make faster the vote computation
     vector<vector<float>> utility_matrix;
@@ -90,14 +83,17 @@ private:
 
     int total_items;
 
-    vector<float> create_representation(set<string> &terms, vector<string> &hits, vector<float> &idf);
+    vector<float> create_representation(set<string> terms, set<string> hits, vector<string> terms_doc,
+                                                            vector<float> vector1);
 
 
     void compute_users_representations(vector<vector<float>> &items_representations, size_t term_count);
 
-    size_t register_term_frequency(string term, set<string> &unique_values, vector<float> &values_idf, size_t item_pos);
+    size_t update_items_per_term(string term, set<string> &unique_values, vector<float> &items_per_terms_ocurrency,
+                                 size_t item_pos);
 
 
+    void clear_sets();
 };
 
 

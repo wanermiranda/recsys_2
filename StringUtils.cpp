@@ -26,7 +26,7 @@ string remove_unwanted(const string s, char delim, string &elems) {
     stringstream ss(s);
     string item;
     while (getline(ss, item, delim)) {
-        if (UNWANTED_TERMS.find(item) == UNWANTED_TERMS.end())
+        if (STOP_WORDS.find(item) == STOP_WORDS.end())
             elems += delim + item;
     }
     return elems;
@@ -43,7 +43,7 @@ vector<string> split(const string str, const string delimiter) {
     int start = 0, end = 0;
     while ((end = str.find(delimiter, start)) != std::string::npos) {
         string term =str.substr(start, end - start);
-        if (UNWANTED_TERMS.find(term) == UNWANTED_TERMS.end())
+        if (STOP_WORDS.find(term) == STOP_WORDS.end())
             tokens.push_back(term);
         start = end + 1;
     }

@@ -29,6 +29,7 @@ public:
 
 
     vector<string> MainTerms;
+    set<string> UniqueMainTerms;
 //    set<size_t> MainTermsPositions;
 
 
