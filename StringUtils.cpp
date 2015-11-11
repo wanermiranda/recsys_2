@@ -40,10 +40,10 @@ string remove_unwanted(const string s, char delim, string &elems) {
 
 vector<string> split(const string str, const string delimiter) {
     std::vector<std::string> tokens;
-    int start = 0, end = 0;
+    size_t start = 0, end = 0;
     while ((end = str.find(delimiter, start)) != std::string::npos) {
         string term =str.substr(start, end - start);
-        if (STOP_WORDS.find(term) == STOP_WORDS.end())
+        //if (STOP_WORDS.find(term) == STOP_WORDS.end())
             tokens.push_back(term);
         start = end + 1;
     }

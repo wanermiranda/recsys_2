@@ -17,7 +17,7 @@ using namespace std;
 
 class ContentRecommender {
 public:
-    void load_args(char **agv, int argc);
+    void load_args(char **agv);
     void read_ratings(char *file_name);
     void read_contents(char *file_name);
     void read_targets(char *file_name);

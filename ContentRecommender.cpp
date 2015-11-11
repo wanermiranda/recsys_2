@@ -10,7 +10,7 @@
 #include "ArrayUtils.h"
 #include "distances.h"
 #include <stddef.h>
-void ContentRecommender::load_args(char **argv, int argc) {
+void ContentRecommender::load_args(char **argv) {
     read_ratings(argv[2]);
     read_targets(argv[3]);
     read_contents(argv[1]);
@@ -50,7 +50,7 @@ void ContentRecommender::read_contents(char *filename) {
     }
 
     // IDF(t) = log_e(Total number of documents / Number of documents with term t in it)
-    for (int term_idx =0; term_idx < main_terms_idf.size(); term_idx++)
+    for (size_t term_idx =0; term_idx < main_terms_idf.size(); term_idx++)
         main_terms_idf[term_idx] = log(total_items / main_terms_idf[term_idx]);
 
     DEBUG_ONLY(cout << "Unique Terms : " << unique_main_terms.size() << endl);
@@ -161,12 +161,14 @@ void ContentRecommender::build_utility_matrix() {
 
     init_utility_matrix(items, users, utility_matrix);
 
-    for (auto user_item_rate : user_item_ratings) {
-        size_t user_pos = user_item_rate[0];
-        size_t item_pos = user_item_rate[1];
-        float vote = user_item_rate[2];
-        utility_matrix[user_pos][item_pos] = vote;
-    }
+    for (auto user_item_rate : user_item_ratings) 
+        if (target_users.find(user_item_rate[0]) != target_users.end())
+        {
+            size_t user_pos = user_item_rate[0];
+            size_t item_pos = user_item_rate[1];
+            float vote = user_item_rate[2];
+            utility_matrix[user_pos][item_pos] = vote;
+        }
     user_item_ratings.clear();
 }
 
@@ -184,7 +186,7 @@ vector<float> ContentRecommender::create_representation(set<string> terms,
     }
 
     // calculating tf and multiplying by idf
-    for (int term_pos = 0; term_pos < terms.size(); term_pos++) {
+    for (size_t term_pos = 0; term_pos < terms.size(); term_pos++) {
         // TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document).
         float tf = representation[term_pos] / uniq_terms_doc.size();
 
@@ -219,20 +221,20 @@ void ContentRecommender::do_content_predictions(vector<vector<float>> &items_rep
 
     targets_predictions.resize(targets_positions.size());
 
-    for (int idx = 0; idx < items_representations_size; idx++) {
+    for (size_t idx = 0; idx < items_representations_size; idx++) {
         items_vectors_norms[idx] = vector_norm(items_representations[idx], unq_terms_sz);
     }
 
-    for (int idx = 0; idx < users_representations_size; idx++) {
+    for (size_t idx = 0; idx < users_representations_size; idx++) {
         users_vectors_norms[idx] = vector_norm(users_representations[idx], unq_terms_sz);
     }
 
     // Comparing user x items
     float guesses = 0.0f;
-    for (int idx_target = 0; idx_target < targets_positions.size(); idx_target++) {
+    for (size_t idx_target = 0; idx_target < targets_positions.size(); idx_target++) {
         size_t user_pos = targets_positions[idx_target].first;
         // Since the representation was created only for the target users we need to locate it into the set
-        size_t target_user_pos = distance(target_users.find(user_pos), target_users.end());
+        size_t target_user_pos = distance(target_users.begin(), target_users.find(user_pos));
         size_t item_pos = targets_positions[idx_target].second;
 
         float vote = 0.0f;
@@ -240,8 +242,9 @@ void ContentRecommender::do_content_predictions(vector<vector<float>> &items_rep
         if (users_vectors_norms[target_user_pos] * items_vectors_norms[item_pos] > 0) {
             float cosine = dot_product(users_representations[target_user_pos], items_representations[item_pos]) /
                            (users_vectors_norms[target_user_pos] * items_vectors_norms[item_pos]);
-            vote = cosine * VOTE_MAX_VALUE;
+            vote = cosine * VOTE_MAX_VALUE * 8.0;
 
+            if (vote > VOTE_MAX_VALUE) vote = VOTE_MAX_VALUE;
 
             if (vote > max) max = vote;
             if (vote < min) min = vote;
@@ -259,8 +262,8 @@ void ContentRecommender::do_content_predictions(vector<vector<float>> &items_rep
             vote = item_contents[item_pos].imdbRating;
         }
         targets_predictions[idx_target] = vote;
-        cout << "Target User: " << target_user_pos << " = " << users_vectors_norms[target_user_pos] << endl;
-        cout << "Target Item:" << item_pos << " = " << items_vectors_norms[item_pos]  << endl;
+        DEBUG_ONLY(cout << "Target User: " << target_user_pos << " = " << users_vectors_norms[target_user_pos] << endl;)
+        DEBUG_ONLY(cout << "Target Item:" << item_pos << " = " << items_vectors_norms[item_pos]  << endl;)
 
         DEBUG_ONLY(cout << idx_target << "/" << targets_positions.size() << endl);
     }
@@ -271,9 +274,10 @@ void ContentRecommender::do_content_predictions(vector<vector<float>> &items_rep
 
 void ContentRecommender::compute_users_representations(vector<vector<float>> &items_representations, size_t term_count) {
     users_representation.resize(target_users.size(), vector<float>(term_count));
+    // initilizing the vector
     for (size_t row = 0; row < target_users.size(); row ++)
         for (size_t col = 0; col < term_count; col ++)
-            users_representation[row][col] = 0.0;
+            users_representation[row][col] = 0.0;    
 
     DEBUG_ONLY(cout << "Created users_representation" << endl);
     // Create a representation considering terms by user

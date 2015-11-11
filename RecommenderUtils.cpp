@@ -7,8 +7,8 @@
 
 void init_utility_matrix(const unordered_map<string, size_t> &items, const unordered_map<string, size_t> &users,
                          vector<vector<float>>utility_matrix) {
-    for (int user = 0; user < users.size(); user++) {
-        for (int item = 0; item < items.size(); item++)
+    for (size_t user = 0; user < users.size(); user++) {
+        for (size_t item = 0; item < items.size(); item++)
             utility_matrix[user][item] = FLOAT_NONE_VALUE;
     }
 }

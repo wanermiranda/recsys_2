@@ -44,7 +44,7 @@ public:
 private:
 //    vector<pair<string, size_t>> plot_pair_terms;
 
-    void analyze_terms(vector<string> &PlotTerms);
+    void analyze_terms(vector<string> &PlotTerms, bool reinforcement_only);
 };
 
 
