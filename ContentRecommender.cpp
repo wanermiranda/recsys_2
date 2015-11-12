@@ -48,12 +48,22 @@ void ContentRecommender::read_contents(char *filename) {
             }
         }
     }
-
+    size_t low_frequency_terms = 0;     
+    
+    
     // IDF(t) = log_e(Total number of documents / Number of documents with term t in it)
     for (size_t term_idx =0; term_idx < main_terms_idf.size(); term_idx++)
-        main_terms_idf[term_idx] = log(total_items / main_terms_idf[term_idx]);
+        // discard low frequency terms, avoiding too much sparsity
+        if (main_terms_idf[term_idx] < MINIMUM_FREQUENCY){
+            low_frequency_terms ++;
+            main_terms_idf[term_idx] = 0;
+        }
+        else 
+            main_terms_idf[term_idx] = log(total_items / main_terms_idf[term_idx]);
 
     DEBUG_ONLY(cout << "Unique Terms : " << unique_main_terms.size() << endl);
+    DEBUG_ONLY(cout << "Low Frequency Terms : " << low_frequency_terms << endl);
+
 
 }
 
@@ -185,13 +195,22 @@ vector<float> ContentRecommender::create_representation(set<string> terms,
         }
     }
 
+    float radical = 0.0f;
     // calculating tf and multiplying by idf
     for (size_t term_pos = 0; term_pos < terms.size(); term_pos++) {
         // TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document).
         float tf = representation[term_pos] / uniq_terms_doc.size();
-
+        radical += (tf * tf) * (idf[term_pos] * idf[term_pos]);
         representation[term_pos] = tf * idf[term_pos];
     }
+
+    radical = sqrt(radical);
+
+    // normalizing the weights 
+    for (size_t term_pos = 0; term_pos < terms.size(); term_pos++) {
+        // TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document).
+        representation[term_pos] /= radical;
+    }    
 //    DEBUG_ONLY(cout << "Representation: " << vector2String<float>(representation) << endl);
     return representation;
 }
@@ -231,6 +250,7 @@ void ContentRecommender::do_content_predictions(vector<vector<float>> &items_rep
 
     // Comparing user x items
     float guesses = 0.0f;
+    float over_max = 0.0f;
     for (size_t idx_target = 0; idx_target < targets_positions.size(); idx_target++) {
         size_t user_pos = targets_positions[idx_target].first;
         // Since the representation was created only for the target users we need to locate it into the set
@@ -242,9 +262,13 @@ void ContentRecommender::do_content_predictions(vector<vector<float>> &items_rep
         if (users_vectors_norms[target_user_pos] * items_vectors_norms[item_pos] > 0) {
             float cosine = dot_product(users_representations[target_user_pos], items_representations[item_pos]) /
                            (users_vectors_norms[target_user_pos] * items_vectors_norms[item_pos]);
-            vote = cosine * VOTE_MAX_VALUE * 8.0;
+            vote = cosine * VOTE_MAX_VALUE * MULTIPLICATION_FACTOR;
 
-            if (vote > VOTE_MAX_VALUE) vote = VOTE_MAX_VALUE;
+            if (vote > VOTE_MAX_VALUE) {
+                over_max ++;
+                vote = VOTE_MAX_VALUE;
+                //vote = item_contents[item_pos].imdbRating;
+            }
 
             if (vote > max) max = vote;
             if (vote < min) min = vote;
@@ -268,7 +292,8 @@ void ContentRecommender::do_content_predictions(vector<vector<float>> &items_rep
         DEBUG_ONLY(cout << idx_target << "/" << targets_positions.size() << endl);
     }
     avg = avg / guesses;
-    DEBUG_ONLY(cout << "Missing : " << targets_positions.size() - guesses << endl;)
+    DEBUG_ONLY(cout << "Missing : " << targets_positions.size() - guesses << " / " << targets_positions.size() << endl;)
+    DEBUG_ONLY(cout << "over_max : " << over_max << endl;)
     DEBUG_ONLY(cout << "Max: " << max << " Min: " << min << " Avg: " << avg << endl;)
 }
 

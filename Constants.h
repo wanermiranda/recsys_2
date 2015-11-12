@@ -9,7 +9,9 @@
 #define RECSYS_2_CONSTANTS_H
 #define FLOAT_NONE_VALUE 0
 #define VOTE_MAX_VALUE 10.0f
-#define N_TERMS 5
+#define N_TERMS 10
+#define MINIMUM_FREQUENCY 20
+#define MULTIPLICATION_FACTOR 2.25
 #define INVALID_CHARS "\\/0123456789[]{}-\'.:;()[]"
 //#define DEBUG
 

@@ -20,7 +20,7 @@ run_debug	: ; make debug
 
 run_test        : ; $(G++) -DEVAL -DDEBUG $(OBJS) -o $(APPNAME) $(LIBS) $(CFLAGS) $(OPTS)   
 		time -v ./recommender content.csv ratings.csv targets.csv > out.stat
-		cat out.stat | egrep -wi --color 'avg|missing|terms'
+		cat out.stat | egrep -wi --color 'avg|missing|terms|over_max'
 
 run_local_test	: ; $(G++) -DEVAL $(OBJS) -o $(APPNAME) $(LIBS) $(CFLAGS) $(OPTS)   
 		time -v ./recommender content.csv ratings.csv target_tests.csv > out.stat

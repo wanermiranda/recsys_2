@@ -39,22 +39,28 @@ ItemContent::ItemContent(string json_contents, size_t item_pos, string item_id) 
             else if (starts_with(token, "genre"))
                 Genres =  split(token_value, ",");
 
-            else if (starts_with(token, "director")) {
+            /*else if (starts_with(token, "director")) {
                 token_value = remove_chars(token_value," ");
                 Directors = split(token_value, ",");
             }
-    	   
-            else if (starts_with(token, "language"))
-    	       MainTerms.push_back(token_value); 
-            else if (starts_with(token, "country"))
-               MainTerms.push_back(token_value);
-            
-            else if (starts_with(token, "awards"))
-                Awards = split(token_value, ",");
             else if (starts_with(token, "actors")) {
                 token_value = remove_chars(token_value, " ");
                 Actors = split(token_value, ",");
+            }*/
+
+            else if (starts_with(token, "country"))
+               MainTerms.push_back(token_value);
+
+            else if (starts_with(token, "type")) {
+               MainTerms.push_back(token_value);
             }
+            
+            else if (starts_with(token, "company"))
+               MainTerms.push_back(token_value);
+
+            else if (starts_with(token, "awards"))
+                Awards = split(token_value, ",");
+
             else if (starts_with(token, "plot")) {
                 token_value = remove_chars(token_value, ",");
                 Plot = token_value;
@@ -62,7 +68,7 @@ ItemContent::ItemContent(string json_contents, size_t item_pos, string item_id) 
             // Extracting the decade 198X
             else if (starts_with(token, "year")) {
                     Year = stoi(token_value);
-                   // MainTerms.push_back(token_value.substr(0, token_value.size()-1) + "X");                 
+                    MainTerms.push_back(token_value.substr(0, token_value.size()-1) + "X");                 
             }
             else if (starts_with(token, "imdbrating")) {
                     imdbRating = stof(token_value);
@@ -70,10 +76,11 @@ ItemContent::ItemContent(string json_contents, size_t item_pos, string item_id) 
         }
     }
 
-
+    
     append_vectors<string>(MainTerms, Title);
 
-    append_vectors<string>(MainTerms, Genres);
+    for (size_t i = 0; i <= 5; i++)
+        append_vectors<string>(MainTerms, Genres);    
 
     append_vectors<string>(MainTerms, Awards);
 
@@ -92,7 +99,7 @@ ItemContent::ItemContent(string json_contents, size_t item_pos, string item_id) 
 
     // Make a reinforcement of the terms if they exists
     // in the plot too - The bool value stands for reinforcement only
-    analyze_terms(PlotTerms, true);
+    analyze_terms(PlotTerms, false);
 
     // Update main terms set to be used during the feature vector build
     append_vectors<string>(MainTerms, PlotTerms);
